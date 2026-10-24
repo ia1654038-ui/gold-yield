@@ -5,7 +5,7 @@
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", var(--font-sans);
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-
+  
   --color-gold-50: #fefdf5;
   --color-gold-100: #fbf6d1;
   --color-gold-200: #f5ea9f;
@@ -119,14 +119,16 @@
   width: 5px;
   height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: #060911;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #263554;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #d4af37;
 }
-

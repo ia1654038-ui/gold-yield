@@ -10,6 +10,8 @@ import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import {
   initSupabase,
+  disconnectSupabase,
+  checkSupabaseHealth,
   dbFindUser,
   dbCreateUser,
   dbUpdateUser,
@@ -46,20 +48,16 @@ function getGemini(): GoogleGenAI | null {
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 // Setup Supabase credentials (with automatic local resilient fallback)
-const DEFAULT_SUPABASE_URL = 'https://ifreybansmlibegsfhkj.supabase.co';
-const USER_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmcmV5YmFuc21saWJlZ3NmaGtqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MzQxNzc2NCwiZXhwIjoyMDk4OTkzNzY0fQ.V76X5EpN-nMN3wVq36pr5YaBtmV5LtTu-EFGSN7UwQ8';
+const DEFAULT_SUPABASE_URL = 'https://anffxxuuvlvaqxagheid.supabase.co';
 
-const rawUrl = (process.env.SUPABASE_URL && process.env.SUPABASE_URL.includes('supabase.co'))
-  ? process.env.SUPABASE_URL
+let currentSupabaseUrl = (process.env.SUPABASE_URL && process.env.SUPABASE_URL.includes('supabase.co'))
+  ? process.env.SUPABASE_URL.replace(/\/rest\/v1\/?$/, '').trim()
   : DEFAULT_SUPABASE_URL;
-const cleanUrl = rawUrl.replace(/\/rest\/v1\/?$/, '').trim();
+let currentSupabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
 
-const envServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-const serviceRoleKey = (envServiceKey && envServiceKey.startsWith('eyJ'))
-  ? envServiceKey
-  : USER_SERVICE_ROLE_KEY;
-
-initSupabase(cleanUrl, serviceRoleKey);
+if (currentSupabaseUrl && currentSupabaseKey) {
+  initSupabase(currentSupabaseUrl, currentSupabaseKey);
+}
 
 // --- API Endpoints ---
 
@@ -698,6 +696,63 @@ app.post('/api/wave/webhook', async (req, res) => {
 // 12. Admin: Seed / Sync VIP Investment Plans
 app.all('/api/admin/seed-plans', async (_req, res) => {
   res.json({ success: true, message: 'Structure VIP 1 & VIP 2 prête.' });
+});
+
+// 13. Admin: Check Supabase Live Status
+app.get('/api/admin/supabase-status', async (_req, res) => {
+  try {
+    const isHealthy = await checkSupabaseHealth(true);
+    res.json({
+      connected: isHealthy,
+      engine: isHealthy ? 'Supabase Cloud (Active)' : 'Local Resilient DB (Active - Fallback)',
+      urlConfigured: Boolean(process.env.SUPABASE_URL || currentSupabaseUrl)
+    });
+  } catch (e: any) {
+    res.json({ connected: false, engine: 'Local Resilient DB', error: e?.message });
+  }
+});
+
+// 14. Admin: Connect & Update Supabase Live
+app.post('/api/admin/set-supabase', async (req, res) => {
+  const { url, key } = req.body;
+  if (!url || !key) {
+    return res.status(400).json({ error: 'URL et Clé API Supabase requises.' });
+  }
+
+  try {
+    const cleanUrl = url.trim().replace(/\/rest\/v1\/?$/, '');
+    const cleanKey = key.trim();
+    initSupabase(cleanUrl, cleanKey);
+    const connected = await checkSupabaseHealth(true);
+
+    if (connected) {
+      currentSupabaseUrl = cleanUrl;
+      currentSupabaseKey = cleanKey;
+      process.env.SUPABASE_URL = cleanUrl;
+      process.env.SUPABASE_SERVICE_ROLE_KEY = cleanKey;
+    }
+
+    res.json({
+      success: true,
+      connected,
+      message: connected
+        ? 'Connexion réussie à Supabase ! Synchronisation active.'
+        : 'Clés enregistrées, mais impossible de joindre la table investment_plans. Assurez-vous d\'avoir exécuté le script SQL dans Supabase.'
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Erreur lors de la configuration Supabase' });
+  }
+});
+
+// 15. Admin: Disconnect Supabase
+app.post('/api/admin/disconnect-supabase', async (_req, res) => {
+  disconnectSupabase();
+  currentSupabaseUrl = '';
+  currentSupabaseKey = '';
+  process.env.SUPABASE_URL = '';
+  process.env.SUPABASE_SERVICE_ROLE_KEY = '';
+  process.env.SUPABASE_ANON_KEY = '';
+  res.json({ success: true, message: 'Base de données Supabase déconnectée avec succès.' });
 });
 
 // --- Vite Dev Middleware and Production Static Server ---

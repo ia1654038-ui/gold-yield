@@ -141,7 +141,14 @@ let supabaseClient: SupabaseClient | null = null;
 let isSupabaseHealthy = false;
 let lastSupabaseHealthCheck = 0;
 
-export function initSupabase(url: string, key: string) {
+export function disconnectSupabase() {
+  supabaseClient = null;
+  isSupabaseHealthy = false;
+  lastSupabaseHealthCheck = 0;
+  console.log('[Database System] Supabase disconnected. Using Local Resilient DB.');
+}
+
+export function initSupabase(url: string, key: string): boolean {
   try {
     if (url && key && url.includes('supabase.co')) {
       const cleanUrl = url.replace(/\/rest\/v1\/?$/, '').trim();
@@ -149,17 +156,22 @@ export function initSupabase(url: string, key: string) {
         auth: { persistSession: false },
         global: { fetch: (input, init) => fetch(input, init) }
       });
-      checkSupabaseHealth();
+      isSupabaseHealthy = true;
+      lastSupabaseHealthCheck = 0; // Reset throttle
+      checkSupabaseHealth(true);
+      return true;
     }
+    return false;
   } catch (e) {
     console.warn('[Supabase Init Error]:', e);
+    return false;
   }
 }
 
-export async function checkSupabaseHealth(): Promise<boolean> {
+export async function checkSupabaseHealth(force: boolean = false): Promise<boolean> {
   const now = Date.now();
-  // Throttle health checks to once every 45 seconds if failing
-  if (now - lastSupabaseHealthCheck < 45000 && !isSupabaseHealthy && lastSupabaseHealthCheck > 0) {
+  // Throttle health checks to once every 45 seconds if failing unless forced
+  if (!force && now - lastSupabaseHealthCheck < 45000 && !isSupabaseHealthy && lastSupabaseHealthCheck > 0) {
     return false;
   }
   lastSupabaseHealthCheck = now;
@@ -193,8 +205,8 @@ export async function checkSupabaseHealth(): Promise<boolean> {
 export async function dbFindUser(phone: string): Promise<UserRecord | null> {
   const db = loadLocalDb();
 
-  // Try Supabase if healthy
-  if (isSupabaseHealthy && supabaseClient) {
+  // Try Supabase if initialized
+  if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient.from('users').select('*').eq('phone', phone).maybeSingle();
       if (!error && data) {
@@ -217,8 +229,8 @@ export async function dbFindUser(phone: string): Promise<UserRecord | null> {
         saveLocalDb();
         return record;
       }
-    } catch {
-      isSupabaseHealthy = false;
+    } catch (e) {
+      console.warn('[dbFindUser Supabase error]:', e);
     }
   }
 
@@ -234,10 +246,6 @@ export async function dbCreateUser(userData: {
   balance?: number;
 }): Promise<UserRecord> {
   const db = loadLocalDb();
-  const existing = db.users.find(u => u.phone === userData.phone);
-  if (existing) {
-    throw new Error('Ce numéro est déjà enregistré. Veuillez vous connecter.');
-  }
 
   const newUser: UserRecord = {
     phone: userData.phone,
@@ -250,14 +258,10 @@ export async function dbCreateUser(userData: {
     created_at: new Date().toISOString()
   };
 
-  // Save locally first so it is immediately guaranteed
-  db.users.push(newUser);
-  saveLocalDb();
-
-  // Async sync to Supabase if available
-  if (isSupabaseHealthy && supabaseClient) {
+  // 1. Direct write to Supabase Cloud
+  if (supabaseClient) {
     try {
-      await supabaseClient.from('users').insert({
+      const { error } = await supabaseClient.from('users').upsert({
         phone: newUser.phone,
         name: newUser.name,
         password: newUser.password,
@@ -266,10 +270,24 @@ export async function dbCreateUser(userData: {
         claimable_sum: 0,
         last_tick_time: newUser.last_tick_time
       });
+      if (error) {
+        console.error('[Supabase dbCreateUser Error]:', error.message);
+      } else {
+        console.log('[Supabase dbCreateUser Success]: Created user', newUser.phone);
+      }
     } catch (err) {
       console.warn('[Supabase Sync Warning]: Could not replicate new user to Supabase:', err);
     }
   }
+
+  // 2. Cache in local DB for fallback
+  const existingIdx = db.users.findIndex(u => u.phone === userData.phone);
+  if (existingIdx >= 0) {
+    db.users[existingIdx] = newUser;
+  } else {
+    db.users.push(newUser);
+  }
+  saveLocalDb();
 
   return newUser;
 }
@@ -282,7 +300,7 @@ export async function dbUpdateUser(phone: string, updates: Partial<UserRecord>):
   Object.assign(user, updates);
   saveLocalDb();
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       const updatePayload: any = {};
       if (updates.balance !== undefined) updatePayload.balance = updates.balance;
@@ -305,7 +323,7 @@ export async function dbUpdateUser(phone: string, updates: Partial<UserRecord>):
 export async function dbGetUserInvestments(phone: string): Promise<ActiveInvestmentRecord[]> {
   const db = loadLocalDb();
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient.from('active_investments').select('*').eq('user_phone', phone);
       if (!error && data && Array.isArray(data)) {
@@ -336,7 +354,7 @@ export async function dbAddInvestment(inv: ActiveInvestmentRecord): Promise<void
   db.active_investments.push(inv);
   saveLocalDb();
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       await supabaseClient.from('active_investments').insert({
         id: inv.id,
@@ -365,7 +383,7 @@ export async function dbUpdateInvestment(id: string, updates: Partial<ActiveInve
     saveLocalDb();
   }
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       await supabaseClient.from('active_investments').update({
         total_collected: updates.total_collected,
@@ -380,7 +398,7 @@ export async function dbUpdateInvestment(id: string, updates: Partial<ActiveInve
 export async function dbGetUserTransactions(phone: string): Promise<TransactionRecord[]> {
   const db = loadLocalDb();
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       const { data, error } = await supabaseClient.from('transactions').select('*').eq('user_phone', phone).order('created_at', { ascending: false });
       if (!error && data && Array.isArray(data)) {
@@ -415,7 +433,7 @@ export async function dbAddTransaction(tx: TransactionRecord): Promise<void> {
   db.transactions.unshift(fullTx);
   saveLocalDb();
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       await supabaseClient.from('transactions').insert({
         id: fullTx.id,
@@ -444,7 +462,7 @@ export async function dbUpdateTransaction(id: string, updates: Partial<Transacti
     saveLocalDb();
   }
 
-  if (isSupabaseHealthy && supabaseClient) {
+  if (supabaseClient) {
     try {
       await supabaseClient.from('transactions').update({
         status: updates.status,

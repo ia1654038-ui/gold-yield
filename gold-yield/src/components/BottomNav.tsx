@@ -1,7 +1,7 @@
 import React from 'react';
 import { Home, CheckSquare, PlusCircle, Wallet, User } from 'lucide-react';
 
-export type MobileTab = 'home' | 'tasks' | 'recharge' | 'assets' | 'profile';
+export type MobileTab = 'home' | 'plans' | 'tasks' | 'recharge' | 'assets' | 'profile';
 
 interface BottomNavProps {
   currentTab: MobileTab;
