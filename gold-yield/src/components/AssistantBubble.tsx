@@ -13,11 +13,11 @@ export function AssistantBubble() {
     },
     {
       q: "Quels sont les gains et salaires quotidiens ?",
-      a: "Dès l'inscription, vous recevez un bonus de 500 FCFA offert. Le VIP 1 (dès 3 500 F) rapporte un gain total garanti de 500 000 FCFA (2 commandes : 700 F et 800 F) avec 1 retrait test de 1 000 F. Le VIP 2 (dès 10 000 F) débloque un gain total garanti de 1 000 000 FCFA (3 commandes : 25 000 F, 50 000 F, 75 000 F) avec 2 retraits de 3 000 F. En VIP 3 (statut société officiel), vous percevez votre salaire quotidien de 35 000 FCFA à 65 000 FCFA par jour !"
+      a: "Dès l'inscription, vous recevez un bonus de 500 FCFA offert. Le VIP 1 rapporte un gain total garanti de 500 000 FCFA (5 articles : 1 820 F, 2 100 F, 6 300 F, 15 500 F et 30 300 F) avec 1 retrait test de 1 000 F. Le VIP 2 débloque un gain total garanti de 1 000 000 FCFA (1 article unique : 50 000 F) avec 2 retraits de 3 000 F. En VIP 3 (statut société officiel), vous percevez votre salaire quotidien de 35 000 FCFA à 65 000 FCFA par jour !"
     },
     {
       q: "Quelles sont les règles de retrait pour le VIP 1 et VIP 2 ?",
-      a: "En VIP 1, votre carte vous donne droit à 1 retrait de 1 000 FCFA. Après épuisement de cette carte, vous devez obligatoirement terminer l'ensemble des commandes et étapes du VIP 2 pour débloquer de nouveaux retraits (vous aurez alors droit à 2 retraits de 3 000 FCFA en VIP 2)."
+      a: "En VIP 1, votre carte vous donne droit à 1 retrait de 1 000 FCFA. Après épuisement de cette carte, vous devez obligatoirement terminer l'article du VIP 2 (50 000 F) pour débloquer de nouveaux retraits (vous aurez alors droit à 2 retraits de 3 000 FCFA en VIP 2)."
     },
     {
       q: "Quels sont les moyens de retrait ?",

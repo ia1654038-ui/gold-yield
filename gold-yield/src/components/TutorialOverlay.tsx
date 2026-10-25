@@ -63,8 +63,8 @@ const TUTORIAL_STEPS: Step[] = [
     icon: Crown,
     color: 'from-amber-500 to-amber-600',
     tips: [
-      'VIP 1 (dès 3 500 F de solde) : Validez 2 articles pour 500 000 FCFA de gain total et 1 retrait test de 1 000 FCFA',
-      'VIP 2 (dès 10 000 F de solde) : Validez 3 équipements pour 1 000 000 FCFA de gain total et 2 retraits de 3 000 FCFA',
+      'VIP 1 : Validez 5 articles (1 820 F, 2 100 F, 6 300 F, 15 500 F, 30 300 F) pour 500 000 FCFA de gain total et 1 retrait test de 1 000 FCFA',
+      'VIP 2 : Validez l\'article unique de mine (50 000 F) pour 1 000 000 FCFA de gain total et 2 retraits de 3 000 FCFA',
       'VIP 3 (Statut Société) : Devenez membre officiel avec salaire journalier garanti de 35 000 à 65 000 FCFA/jour'
     ],
     vipHighlight: {

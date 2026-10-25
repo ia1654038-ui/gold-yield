@@ -236,21 +236,17 @@ export function DashboardScreen({
     }
   }, [userPhone]);
 
-  // Saved VIP 1 Step ('article1' | 'article2')
-  const [vip1SavedStep, setVip1SavedStep] = useState<'article1' | 'article2'>(() => {
+  // Saved VIP 1 Step ('article1' | 'article2' | 'article3' | 'article4' | 'article5')
+  const [vip1SavedStep, setVip1SavedStep] = useState<'article1' | 'article2' | 'article3' | 'article4' | 'article5'>(() => {
     if (typeof window !== 'undefined' && userPhone) {
       const saved = localStorage.getItem(`gy_${userPhone}_vip1_step`);
-      if (saved === 'article2') return 'article2';
+      if (saved === 'article2' || saved === 'article3' || saved === 'article4' || saved === 'article5') return saved;
     }
     return 'article1';
   });
 
-  // Saved VIP 2 Step ('article1' | 'article2' | 'article3')
-  const [vip2SavedStep, setVip2SavedStep] = useState<'article1' | 'article2' | 'article3'>(() => {
-    if (typeof window !== 'undefined' && userPhone) {
-      const saved = localStorage.getItem(`gy_${userPhone}_vip2_step`);
-      if (saved === 'article2' || saved === 'article3') return saved;
-    }
+  // Saved VIP 2 Step ('article1')
+  const [vip2SavedStep, setVip2SavedStep] = useState<'article1'>(() => {
     return 'article1';
   });
 
@@ -331,12 +327,12 @@ export function DashboardScreen({
     articleName: string;
   } | null>(null);
 
-  // VIP 1 Commander Flow state: 'none' | 'loading' | 'article1' | 'article2' | 'success'
-  const [vip1CommanderStep, setVip1CommanderStep] = useState<'none' | 'loading' | 'article1' | 'article2' | 'success'>('none');
+  // VIP 1 Commander Flow state: 'none' | 'loading' | 'article1' | 'article2' | 'article3' | 'article4' | 'article5' | 'success'
+  const [vip1CommanderStep, setVip1CommanderStep] = useState<'none' | 'loading' | 'article1' | 'article2' | 'article3' | 'article4' | 'article5' | 'success'>('none');
   const [vip1LoadingProgress, setVip1LoadingProgress] = useState<number>(0);
 
-  // VIP 2 Commander Flow state: 'none' | 'loading' | 'article1' | 'article2' | 'article3' | 'success'
-  const [vip2CommanderStep, setVip2CommanderStep] = useState<'none' | 'loading' | 'article1' | 'article2' | 'article3' | 'success'>('none');
+  // VIP 2 Commander Flow state: 'none' | 'loading' | 'article1' | 'success'
+  const [vip2CommanderStep, setVip2CommanderStep] = useState<'none' | 'loading' | 'article1' | 'success'>('none');
   const [vip2LoadingProgress, setVip2LoadingProgress] = useState<number>(0);
 
   // Fast loading progress effect for Commander workflow (VIP 1)
@@ -380,17 +376,23 @@ export function DashboardScreen({
       if (showToast) showToast("Le niveau VIP 1 est déjà terminé, validé et bloqué !", "info");
       return;
     }
-    if (balance < 3500) {
+    if (balance < 1820) {
       setVipLevelModal(null);
       setInsufficientBalanceModal({
-        requiredPrice: 3500,
-        missingAmount: 3500 - balance,
-        articleName: "Accès Pack Mine VIP 1 (Solde minimum requis : 3 500 FCFA)"
+        requiredPrice: 1820,
+        missingAmount: 1820 - balance,
+        articleName: "Accès Article 1/5 VIP 1 (Solde minimum requis : 1 820 FCFA)"
       });
       return;
     }
     setVipLevelModal(null);
-    if (vip1SavedStep === 'article2') {
+    if (vip1SavedStep === 'article5') {
+      setVip1CommanderStep('article5');
+    } else if (vip1SavedStep === 'article4') {
+      setVip1CommanderStep('article4');
+    } else if (vip1SavedStep === 'article3') {
+      setVip1CommanderStep('article3');
+    } else if (vip1SavedStep === 'article2') {
       setVip1CommanderStep('article2');
     } else {
       setVip1CommanderStep('loading');
@@ -402,36 +404,31 @@ export function DashboardScreen({
       if (showToast) showToast("Le niveau VIP 2 est déjà terminé, validé et bloqué !", "info");
       return;
     }
-    if (balance < 10000) {
+    if (balance < 50000) {
       setVipLevelModal(null);
       setInsufficientBalanceModal({
-        requiredPrice: 10000,
-        missingAmount: 10000 - balance,
-        articleName: "Accès Pack Mine VIP 2 (Solde minimum requis : 10 000 FCFA)"
+        requiredPrice: 50000,
+        missingAmount: 50000 - balance,
+        articleName: "Accès Article VIP 2 (Solde minimum requis : 50 000 FCFA)"
       });
       return;
     }
     setVipLevelModal(null);
-    if (vip2SavedStep === 'article3') {
-      setVip2CommanderStep('article3');
-    } else if (vip2SavedStep === 'article2') {
-      setVip2CommanderStep('article2');
-    } else {
-      setVip2CommanderStep('loading');
-    }
+    setVip2CommanderStep('loading');
   };
 
+  // VIP 1 Article 1: 1 820 FCFA
   const handlePayArticle1 = () => {
-    if (balance < 1700) {
+    if (balance < 1820) {
       setInsufficientBalanceModal({
-        requiredPrice: 1700,
-        missingAmount: 1700 - balance,
-        articleName: "Pelle & Détecteur Aurifère (VIP 1)"
+        requiredPrice: 1820,
+        missingAmount: 1820 - balance,
+        articleName: "Pelle & Détecteur Aurifère (VIP 1 • 1/5 • 1 820 FCFA)"
       });
       return;
     }
     if (onCompleteTask) {
-      onCompleteTask("Achat Article de Mine VIP 1 - Lot #1 (Détecteur 1 700F)", -1700);
+      onCompleteTask("Achat Article de Mine VIP 1 - Lot #1 (1 820F)", -1820);
     }
     setVip1SavedStep('article2');
     if (userPhone) {
@@ -440,17 +437,78 @@ export function DashboardScreen({
     setVip1CommanderStep('article2');
   };
 
+  // VIP 1 Article 2: 2 100 FCFA
   const handlePayArticle2 = () => {
-    if (balance < 1800) {
+    if (balance < 2100) {
       setInsufficientBalanceModal({
-        requiredPrice: 1800,
-        missingAmount: 1800 - balance,
-        articleName: "Sonde Aurifère Haute Précision (VIP 1)"
+        requiredPrice: 2100,
+        missingAmount: 2100 - balance,
+        articleName: "Sonde Spectrométrique Lazer (VIP 1 • 2/5 • 2 100 FCFA)"
       });
       return;
     }
     if (onCompleteTask) {
-      onCompleteTask("Achat Article de Mine VIP 1 - Lot #2 (Sonde 1 800F)", -1800);
+      onCompleteTask("Achat Article de Mine VIP 1 - Lot #2 (2 100F)", -2100);
+    }
+    setVip1SavedStep('article3');
+    if (userPhone) {
+      localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article3');
+    }
+    setVip1CommanderStep('article3');
+  };
+
+  // VIP 1 Article 3: 6 300 FCFA
+  const handlePayArticle3 = () => {
+    if (balance < 6300) {
+      setInsufficientBalanceModal({
+        requiredPrice: 6300,
+        missingAmount: 6300 - balance,
+        articleName: "Broyeur Hydraulique Quartz 24K (VIP 1 • 3/5 • 6 300 FCFA)"
+      });
+      return;
+    }
+    if (onCompleteTask) {
+      onCompleteTask("Achat Article de Mine VIP 1 - Lot #3 (6 300F)", -6300);
+    }
+    setVip1SavedStep('article4');
+    if (userPhone) {
+      localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article4');
+    }
+    setVip1CommanderStep('article4');
+  };
+
+  // VIP 1 Article 4: 15 500 FCFA
+  const handlePayArticle4 = () => {
+    if (balance < 15500) {
+      setInsufficientBalanceModal({
+        requiredPrice: 15500,
+        missingAmount: 15500 - balance,
+        articleName: "Refroidisseur & Thermorégulateur de Creusets (VIP 1 • 4/5 • 15 500 FCFA)"
+      });
+      return;
+    }
+    if (onCompleteTask) {
+      onCompleteTask("Achat Article de Mine VIP 1 - Lot #4 (15 500F)", -15500);
+    }
+    setVip1SavedStep('article5');
+    if (userPhone) {
+      localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article5');
+    }
+    setVip1CommanderStep('article5');
+  };
+
+  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (+500 000 FCFA)
+  const handlePayArticle5 = () => {
+    if (balance < 30300) {
+      setInsufficientBalanceModal({
+        requiredPrice: 30300,
+        missingAmount: 30300 - balance,
+        articleName: "Moule & Filtre Pureté Finale Lingots 24K (VIP 1 • 5/5 • 30 300 FCFA)"
+      });
+      return;
+    }
+    if (onCompleteTask) {
+      onCompleteTask("Achat Article de Mine VIP 1 - Lot #5 (30 300F)", -30300);
     }
     setTimeout(() => {
       if (onCompleteTask) {
@@ -474,56 +532,18 @@ export function DashboardScreen({
     }, 250);
   };
 
-  // VIP 2 Payments (Article 1: 25 000F, Article 2: 50 000F, Article 3: 75 000F • Gain final: 500 000 FCFA)
+  // VIP 2 Single Article 1/1: 50 000 FCFA -> Finish VIP 2 (+1 000 000 FCFA)
   const handlePayVip2Article1 = () => {
-    if (balance < 25000) {
-      setInsufficientBalanceModal({
-        requiredPrice: 25000,
-        missingAmount: 25000 - balance,
-        articleName: "Broyeur Hydraulique Quartz 24K (VIP 2 • 1/3 • 25 000 FCFA)"
-      });
-      return;
-    }
-    if (onCompleteTask) {
-      onCompleteTask("Achat Article de Mine VIP 2 - Lot #1 (Broyeur 25 000F)", -25000);
-    }
-    setVip2SavedStep('article2');
-    if (userPhone) {
-      localStorage.setItem(`gy_${userPhone}_vip2_step`, 'article2');
-    }
-    setVip2CommanderStep('article2');
-  };
-
-  const handlePayVip2Article2 = () => {
     if (balance < 50000) {
       setInsufficientBalanceModal({
         requiredPrice: 50000,
         missingAmount: 50000 - balance,
-        articleName: "Refroidisseur de Creusets d'Or (VIP 2 • 2/3 • 50 000 FCFA)"
+        articleName: "Station Industrielle d'Extraction Aurifère (VIP 2 • 1/1 • 50 000 FCFA)"
       });
       return;
     }
     if (onCompleteTask) {
-      onCompleteTask("Achat Article de Mine VIP 2 - Lot #2 (Refroidisseur 50 000F)", -50000);
-    }
-    setVip2SavedStep('article3');
-    if (userPhone) {
-      localStorage.setItem(`gy_${userPhone}_vip2_step`, 'article3');
-    }
-    setVip2CommanderStep('article3');
-  };
-
-  const handlePayVip2Article3 = () => {
-    if (balance < 75000) {
-      setInsufficientBalanceModal({
-        requiredPrice: 75000,
-        missingAmount: 75000 - balance,
-        articleName: "Moule & Filtre Spectrométrique (VIP 2 • 3/3 • 75 000 FCFA)"
-      });
-      return;
-    }
-    if (onCompleteTask) {
-      onCompleteTask("Achat Article de Mine VIP 2 - Lot #3 (Filtre Lingots 75 000F)", -75000);
+      onCompleteTask("Achat Article de Mine VIP 2 (50 000F)", -50000);
     }
     setTimeout(() => {
       if (onCompleteTask) {
@@ -726,7 +746,17 @@ export function DashboardScreen({
                     className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-md shadow-amber-500/20 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
-                    <span>{vip1SavedStep === 'article2' ? 'Reprendre (2/2)' : 'Commander'}</span>
+                    <span>
+                      {vip1SavedStep === 'article5'
+                        ? 'Reprendre (5/5)'
+                        : vip1SavedStep === 'article4'
+                        ? 'Reprendre (4/5)'
+                        : vip1SavedStep === 'article3'
+                        ? 'Reprendre (3/5)'
+                        : vip1SavedStep === 'article2'
+                        ? 'Reprendre (2/5)'
+                        : 'Commander (1/5)'}
+                    </span>
                   </button>
                 ) : (
                   <button
@@ -770,9 +800,9 @@ export function DashboardScreen({
               ? 'Niveau Membre VIP 2 — Terminé & Validé !'
               : isVip2Unlocked ? 'Niveau Membre VIP 2 — Accès Débloqué !' : 'Niveau Membre VIP 2',
             subtitle: isVip2Finished
-              ? 'Félicitations ! Vous avez accompli le VIP 2 (25 000F, 50 000F, 75 000F) et empoché 1 000 000 FCFA !'
+              ? 'Félicitations ! Vous avez accompli le VIP 2 (50 000 FCFA) et empoché 1 000 000 FCFA !'
               : isVip2Unlocked
-              ? 'Félicitations ! VIP 2 Débloqué (Solde ≥ 10 000 FCFA). Cliquez sur Commander pour passer vos 3 commandes VIP 2 !'
+              ? 'Félicitations ! VIP 2 Débloqué (Solde ≥ 10 000 FCFA). Cliquez sur Commander pour passer votre commande VIP 2 (50 000 FCFA) !'
               : 'Pour accéder au VIP 2, le solde de votre compte doit être supérieur ou égal à 10 000 FCFA !',
             isVip1: false,
             isVip2: true,
@@ -822,13 +852,7 @@ export function DashboardScreen({
                   className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-md shadow-amber-500/20 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
-                  <span>
-                    {vip2SavedStep === 'article3'
-                      ? 'Reprendre (3/3)'
-                      : vip2SavedStep === 'article2'
-                      ? 'Reprendre (2/3)'
-                      : 'Commander'}
-                  </span>
+                  <span>Commander (1/1 • 50 000F)</span>
                 </button>
               </div>
             ) : (
@@ -1350,9 +1374,15 @@ NOTIFY pgrst, 'reload schema';`}
                       </span>
                     </div>
                     <p className="text-xs text-slate-300">
-                      {vip1SavedStep === 'article2' 
-                        ? "Étape 2 / 2 : Il vous reste 1 dernier article à régler pour encaisser votre prime de 500 000 FCFA."
-                        : "Étape 1 / 2 : Complétez les 2 articles VIP 1 pour empocher vos 500 000 FCFA de gain total."}
+                      {vip1SavedStep === 'article5'
+                        ? "Étape 5 / 5 : Plus qu'un dernier article à régler (30 300 F) pour empocher vos 500 000 FCFA !"
+                        : vip1SavedStep === 'article4'
+                        ? "Étape 4 / 5 : Réglez le 4e article (15 500 F) pour accéder à l'étape finale du VIP 1."
+                        : vip1SavedStep === 'article3'
+                        ? "Étape 3 / 5 : Réglez le 3e article (6 300 F) pour continuer votre progression VIP 1."
+                        : vip1SavedStep === 'article2' 
+                        ? "Étape 2 / 5 : Réglez le 2e article (2 100 F) pour avancer vers la récompense de 500 000 FCFA."
+                        : "Étape 1 / 5 : Complétez les 5 articles VIP 1 (dès 1 820 F) pour empocher vos 500 000 FCFA de gain total."}
                     </p>
                   </div>
 
@@ -1366,13 +1396,29 @@ NOTIFY pgrst, 'reload schema';`}
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase font-bold font-mono">Avancement</span>
                     <span className="font-black text-white font-mono text-sm">
-                      {vip1SavedStep === 'article2' ? '50% (1/2 Articles)' : '0% (0/2 Articles)'}
+                      {vip1SavedStep === 'article5'
+                        ? '80% (4/5 Articles)'
+                        : vip1SavedStep === 'article4'
+                        ? '60% (3/5 Articles)'
+                        : vip1SavedStep === 'article3'
+                        ? '40% (2/5 Articles)'
+                        : vip1SavedStep === 'article2'
+                        ? '20% (1/5 Articles)'
+                        : '0% (0/5 Articles)'}
                     </span>
                   </div>
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase font-bold font-mono">Prochaine étape</span>
                     <span className="font-black text-amber-400 font-mono text-sm">
-                      {vip1SavedStep === 'article2' ? '800 FCFA' : '700 FCFA'}
+                      {vip1SavedStep === 'article5'
+                        ? '30 300 FCFA'
+                        : vip1SavedStep === 'article4'
+                        ? '15 500 FCFA'
+                        : vip1SavedStep === 'article3'
+                        ? '6 300 FCFA'
+                        : vip1SavedStep === 'article2'
+                        ? '2 100 FCFA'
+                        : '1 820 FCFA'}
                     </span>
                   </div>
                   <div>
@@ -1387,12 +1433,32 @@ NOTIFY pgrst, 'reload schema';`}
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] font-bold text-slate-400 font-mono">
                     <span>Progression VIP 1</span>
-                    <span>{vip1SavedStep === 'article2' ? 'Étape 2 sur 2' : 'Étape 1 sur 2'}</span>
+                    <span>
+                      {vip1SavedStep === 'article5'
+                        ? 'Étape 5 sur 5'
+                        : vip1SavedStep === 'article4'
+                        ? 'Étape 4 sur 5'
+                        : vip1SavedStep === 'article3'
+                        ? 'Étape 3 sur 5'
+                        : vip1SavedStep === 'article2'
+                        ? 'Étape 2 sur 5'
+                        : 'Étape 1 sur 5'}
+                    </span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-white/[0.06]">
                     <div 
                       className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-500 rounded-full" 
-                      style={{ width: vip1SavedStep === 'article2' ? '50%' : '10%' }} 
+                      style={{
+                        width: vip1SavedStep === 'article5'
+                          ? '80%'
+                          : vip1SavedStep === 'article4'
+                          ? '60%'
+                          : vip1SavedStep === 'article3'
+                          ? '40%'
+                          : vip1SavedStep === 'article2'
+                          ? '20%'
+                          : '5%'
+                      }} 
                     />
                   </div>
                 </div>
@@ -1403,9 +1469,15 @@ NOTIFY pgrst, 'reload schema';`}
                 >
                   <Zap className="w-4 h-4 fill-slate-950" />
                   <span>
-                    {vip1SavedStep === 'article2'
-                      ? 'Poursuivre la commande VIP 1 (Étape 2/2 • 800 FCFA)'
-                      : 'Démarrer la commande VIP 1 (700 FCFA)'}
+                    {vip1SavedStep === 'article5'
+                      ? 'Poursuivre la commande VIP 1 (Étape 5/5 • 30 300 FCFA)'
+                      : vip1SavedStep === 'article4'
+                      ? 'Poursuivre la commande VIP 1 (Étape 4/5 • 15 500 FCFA)'
+                      : vip1SavedStep === 'article3'
+                      ? 'Poursuivre la commande VIP 1 (Étape 3/5 • 6 300 FCFA)'
+                      : vip1SavedStep === 'article2'
+                      ? 'Poursuivre la commande VIP 1 (Étape 2/5 • 2 100 FCFA)'
+                      : 'Démarrer la commande VIP 1 (Étape 1/5 • 1 820 FCFA)'}
                   </span>
                 </button>
               </div>
@@ -1415,17 +1487,13 @@ NOTIFY pgrst, 'reload schema';`}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/[0.08] pb-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-base font-black font-display text-white">Niveau VIP 2 — Équipements de Mine</h4>
+                      <h4 className="text-base font-black font-display text-white">Niveau VIP 2 — Équipement de Mine</h4>
                       <span className="text-[10px] font-black bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/30 uppercase tracking-wider font-mono">
                         En cours
                       </span>
                     </div>
                     <p className="text-xs text-slate-300">
-                      {vip2SavedStep === 'article3'
-                        ? 'Étape 3 / 3 : Plus qu’un dernier article à 75 000 F pour débloquer les 1 000 000 FCFA !'
-                        : vip2SavedStep === 'article2'
-                        ? 'Étape 2 / 3 : Réglez le 2e article à 50 000 F pour progresser vers la prime finale de 1 000 000 FCFA.'
-                        : 'Étape 1 / 3 : Lancez votre première commande VIP 2 à 25 000 F.'}
+                      Étape Unique 1 / 1 : Réglez l'article unique de mine VIP 2 à 50 000 F pour débloquer immédiatement vos 1 000 000 FCFA !
                     </p>
                   </div>
 
@@ -1439,13 +1507,13 @@ NOTIFY pgrst, 'reload schema';`}
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase font-bold font-mono">Avancement</span>
                     <span className="font-black text-white font-mono text-sm">
-                      {vip2SavedStep === 'article3' ? '66% (2/3 Articles)' : vip2SavedStep === 'article2' ? '33% (1/3 Articles)' : '0% (0/3 Articles)'}
+                      0% (0/1 Article)
                     </span>
                   </div>
                   <div>
                     <span className="text-slate-400 block text-[9px] uppercase font-bold font-mono">Prochaine étape</span>
                     <span className="font-black text-amber-400 font-mono text-sm">
-                      {vip2SavedStep === 'article3' ? '75 000 FCFA' : vip2SavedStep === 'article2' ? '50 000 FCFA' : '25 000 FCFA'}
+                      50 000 FCFA
                     </span>
                   </div>
                   <div>
@@ -1460,14 +1528,12 @@ NOTIFY pgrst, 'reload schema';`}
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] font-bold text-slate-400 font-mono">
                     <span>Progression VIP 2</span>
-                    <span>
-                      {vip2SavedStep === 'article3' ? 'Étape 3 sur 3' : vip2SavedStep === 'article2' ? 'Étape 2 sur 3' : 'Étape 1 sur 3'}
-                    </span>
+                    <span>Étape 1 sur 1</span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-white/[0.06]">
                     <div 
                       className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-500 rounded-full" 
-                      style={{ width: vip2SavedStep === 'article3' ? '66%' : vip2SavedStep === 'article2' ? '33%' : '10%' }} 
+                      style={{ width: '15%' }} 
                     />
                   </div>
                 </div>
@@ -1477,13 +1543,7 @@ NOTIFY pgrst, 'reload schema';`}
                   className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                 >
                   <Zap className="w-4 h-4 fill-slate-950" />
-                  <span>
-                    {vip2SavedStep === 'article3'
-                      ? 'Finaliser le VIP 2 (Étape 3/3 • 75 000 FCFA)'
-                      : vip2SavedStep === 'article2'
-                      ? 'Poursuivre la commande VIP 2 (Étape 2/3 • 50 000 FCFA)'
-                      : 'Démarrer la commande VIP 2 (25 000 FCFA)'}
-                  </span>
+                  <span>Démarrer la commande VIP 2 (1/1 • 50 000 FCFA)</span>
                 </button>
               </div>
             ) : (
@@ -1998,15 +2058,15 @@ NOTIFY pgrst, 'reload schema';`}
                   <p className="text-xs text-slate-300 leading-relaxed">
                     {isVip1Finished ? (
                       <span>
-                        Félicitations ! Vous avez accompli l'ensemble des commandes d'articles du <strong>VIP 1</strong> et empoché la récompense globale de <strong>500 000 FCFA</strong>. Ce niveau est désormais sauvegardé et définitivement bloqué.
+                        Félicitations ! Vous avez accompli l'ensemble des 5 commandes d'articles du <strong>VIP 1</strong> (1 820F, 2 100F, 6 300F, 15 500F, 30 300F) et empoché la récompense globale de <strong>500 000 FCFA</strong>. Ce niveau est désormais sauvegardé et définitivement bloqué.
                       </span>
                     ) : isVip1Unlocked ? (
                       <span>
-                        Félicitations ! Avec votre solde actuel de <strong className="text-emerald-400 font-mono">{balance.toLocaleString('fr-FR')} FCFA</strong> (≥ 3 500 FCFA), le système vous donne accès au <strong>VIP 1</strong> ! Vous pouvez exécuter vos quêtes quotidiennes dès maintenant.
+                        Félicitations ! Avec votre solde actuel de <strong className="text-emerald-400 font-mono">{balance.toLocaleString('fr-FR')} FCFA</strong>, le système vous donne accès au <strong>VIP 1 (5 articles de mine à valider)</strong> !
                       </span>
                     ) : (
                       <span>
-                        Lorsque vous avez un solde d'au moins <strong>3 500 FCFA</strong> sur votre compte, le système vous donne directement accès au <strong>VIP 1</strong> ! Votre solde actuel est de <strong className="text-amber-400 font-mono">{balance.toLocaleString('fr-FR')} FCFA</strong>. Effectuez un dépôt pour débloquer l'accès.
+                        Pour accéder au <strong>VIP 1</strong>, vous devez acquérir les 5 articles de mine à tarif préférentiel (1 820F, 2 100F, 6 300F, 15 500F, 30 300F). Effectuez un dépôt pour commencer l'exploitation.
                       </span>
                     )}
                   </p>
@@ -2022,9 +2082,15 @@ NOTIFY pgrst, 'reload schema';`}
                     >
                       <ShoppingCart className="w-4 h-4 text-slate-950" />
                       <span>
-                        {vip1SavedStep === 'article2'
-                          ? 'Reprendre la commande VIP 1 (Étape 2/2 • 1 800 FCFA)'
-                          : 'Commander (Articles de mine VIP 1)'}
+                        {vip1SavedStep === 'article5'
+                          ? 'Reprendre la commande VIP 1 (Étape 5/5 • 30 300 FCFA)'
+                          : vip1SavedStep === 'article4'
+                          ? 'Reprendre la commande VIP 1 (Étape 4/5 • 15 500 FCFA)'
+                          : vip1SavedStep === 'article3'
+                          ? 'Reprendre la commande VIP 1 (Étape 3/5 • 6 300 FCFA)'
+                          : vip1SavedStep === 'article2'
+                          ? 'Reprendre la commande VIP 1 (Étape 2/5 • 2 100 FCFA)'
+                          : 'Commander (Articles VIP 1 • Étape 1/5 • 1 820 FCFA)'}
                       </span>
                     </button>
                   ) : (
@@ -2033,7 +2099,7 @@ NOTIFY pgrst, 'reload schema';`}
                       className="w-full py-3.5 bg-slate-800 hover:bg-slate-750 text-amber-300 font-black text-xs rounded-xl border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                     >
                       <Lock className="w-4 h-4 text-amber-400" />
-                      <span>Solde insuffisant pour commander (Dépôt min. 3 500F)</span>
+                      <span>Solde insuffisant pour commander (Dépôt requis)</span>
                     </button>
                   )
                 )}
@@ -2052,13 +2118,7 @@ NOTIFY pgrst, 'reload schema';`}
                       className="w-full py-3.5 bg-gradient-to-r from-emerald-400 via-amber-400 to-yellow-400 hover:from-emerald-300 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl transition-all shadow-lg shadow-amber-500/25 cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                     >
                       <ShoppingCart className="w-4 h-4 text-slate-950" />
-                      <span>
-                        {vip2SavedStep === 'article3'
-                          ? 'Reprendre la commande VIP 2 (Étape 3/3 • 75 000 FCFA)'
-                          : vip2SavedStep === 'article2'
-                          ? 'Reprendre la commande VIP 2 (Étape 2/3 • 50 000 FCFA)'
-                          : 'Commander (Articles de mine VIP 2)'}
-                      </span>
+                      <span>Commander (Article de mine VIP 2 • 1/1 • 50 000 FCFA)</span>
                     </button>
                   ) : (
                     <button
@@ -2231,12 +2291,12 @@ NOTIFY pgrst, 'reload schema';`}
                 </div>
               )}
 
-              {/* 2. ARTICLE 1: 1 700 FCFA */}
+              {/* 2. ARTICLE 1: 1 820 FCFA */}
               {vip1CommanderStep === 'article1' && (
                 <div className="space-y-4 text-left">
                   <div className="text-center space-y-1">
                     <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
-                      Article de Mine VIP 1 • Étape 1/2
+                      Article de Mine VIP 1 • Étape 1/5
                     </span>
                     <h3 className="text-xl font-black text-white font-display">
                       Pelle & Détecteur Aurifère
@@ -2249,19 +2309,19 @@ NOTIFY pgrst, 'reload schema';`}
                         <img src={imgDetectorKit} alt="Kit Détecteur de Pépites 24K" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">Équipement d'Excavation</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">Équipement d'Excavation (1/5)</span>
                         <h4 className="text-sm font-extrabold text-white">Kit Détecteur de Pépites 24K</h4>
                         <div className="flex items-center gap-2 pt-0.5">
                           <span className="text-xs text-slate-500 line-through font-mono">4 500 F</span>
                           <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                            1 700 FCFA
+                            1 820 FCFA
                           </span>
                         </div>
                       </div>
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Achetez ce premier article de mine au prix de <strong>1 700 FCFA</strong> pour lancer l'exploitation de votre filon aurifère VIP 1.
+                      Achetez le premier article au prix de <strong>1 820 FCFA</strong> pour lancer la prospection aurifère du VIP 1.
                     </p>
                   </div>
 
@@ -2270,20 +2330,20 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 1 700 FCFA</span>
+                    <span>Payer 1 820 FCFA (Étape 1/5)</span>
                   </button>
                 </div>
               )}
 
-              {/* 3. ARTICLE 2: 1 800 FCFA */}
+              {/* 3. ARTICLE 2: 2 100 FCFA */}
               {vip1CommanderStep === 'article2' && (
                 <div className="space-y-4 text-left">
                   <div className="text-center space-y-1">
                     <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
-                      Article de Mine VIP 1 • Étape 2/2
+                      Article de Mine VIP 1 • Étape 2/5
                     </span>
                     <h3 className="text-xl font-black text-white font-display">
-                      Sonde Aurifère Haute Précision
+                      Sonde Spectrométrique Lazer
                     </h3>
                   </div>
 
@@ -2293,19 +2353,19 @@ NOTIFY pgrst, 'reload schema';`}
                         <img src={imgSpectrometerProbe} alt="Sonde Spectrométrique Lazer" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">Dernier Équipement Requis</span>
+                        <span className="text-[10px] text-slate-400 font-mono block">Analyse Pureté Métal (2/5)</span>
                         <h4 className="text-sm font-extrabold text-white">Sonde Spectrométrique Lazer</h4>
                         <div className="flex items-center gap-2 pt-0.5">
                           <span className="text-xs text-slate-500 line-through font-mono">5 000 F</span>
                           <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                            1 800 FCFA
+                            2 100 FCFA
                           </span>
                         </div>
                       </div>
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez ce second article à <strong>1 800 FCFA</strong> pour clôturer les commandes VIP 1 (total 3 500 FCFA) et recevoir immédiatement votre récompense exceptionnelle de <strong>500 000 FCFA</strong> !
+                      Réglez le second équipement à <strong>2 100 FCFA</strong> pour analyser la teneur en carats de vos filons.
                     </p>
                   </div>
 
@@ -2313,13 +2373,145 @@ NOTIFY pgrst, 'reload schema';`}
                     onClick={handlePayArticle2}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
-                    <Crown className="w-5 h-5 text-slate-950" />
-                    <span>Payer 1 800 FCFA & Recevoir 500 000 FCFA</span>
+                    <CheckCircle className="w-5 h-5 text-slate-950" />
+                    <span>Payer 2 100 FCFA (Étape 2/5)</span>
                   </button>
                 </div>
               )}
 
-              {/* 4. SUCCESS CELEBRATION MODAL */}
+              {/* 4. ARTICLE 3: 6 300 FCFA */}
+              {vip1CommanderStep === 'article3' && (
+                <div className="space-y-4 text-left">
+                  <div className="text-center space-y-1">
+                    <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
+                      Article de Mine VIP 1 • Étape 3/5
+                    </span>
+                    <h3 className="text-xl font-black text-white font-display">
+                      Broyeur Concasseur Quartz 24K
+                    </h3>
+                  </div>
+
+                  <div className="bg-slate-950 border border-amber-500/30 rounded-2xl p-4 space-y-3 relative overflow-hidden">
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 h-20 rounded-2xl border-2 border-amber-500/40 overflow-hidden shrink-0 shadow-xl relative bg-slate-900">
+                        <img src={imgHydraulicCrusher} alt="Broyeur Concasseur Quartz 24K" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] text-slate-400 font-mono block">Broyage Minier (3/5)</span>
+                        <h4 className="text-sm font-extrabold text-white">Broyeur Concasseur Quartz 24K</h4>
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <span className="text-xs text-slate-500 line-through font-mono">12 000 F</span>
+                          <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                            6 300 FCFA
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      Acquérez le 3e équipement de broyage à <strong>6 300 FCFA</strong> pour pulvériser le minerai aurifère.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handlePayArticle3}
+                    className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <CheckCircle className="w-5 h-5 text-slate-950" />
+                    <span>Payer 6 300 FCFA (Étape 3/5)</span>
+                  </button>
+                </div>
+              )}
+
+              {/* 5. ARTICLE 4: 15 500 FCFA */}
+              {vip1CommanderStep === 'article4' && (
+                <div className="space-y-4 text-left">
+                  <div className="text-center space-y-1">
+                    <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
+                      Article de Mine VIP 1 • Étape 4/5
+                    </span>
+                    <h3 className="text-xl font-black text-white font-display">
+                      Refroidisseur & Thermorégulateur
+                    </h3>
+                  </div>
+
+                  <div className="bg-slate-950 border border-amber-500/30 rounded-2xl p-4 space-y-3 relative overflow-hidden">
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 h-20 rounded-2xl border-2 border-amber-500/40 overflow-hidden shrink-0 shadow-xl relative bg-slate-900">
+                        <img src={imgCrucibleChiller} alt="Refroidisseur de Creusets d'Or" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] text-slate-400 font-mono block">Thermorégulation (4/5)</span>
+                        <h4 className="text-sm font-extrabold text-white">Refroidisseur de Creusets d'Or</h4>
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <span className="text-xs text-slate-500 line-through font-mono">25 000 F</span>
+                          <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                            15 500 FCFA
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      Réglez le 4e article à <strong>15 500 FCFA</strong> pour stabiliser la température de fusion avant le moulage final.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handlePayArticle4}
+                    className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <CheckCircle className="w-5 h-5 text-slate-950" />
+                    <span>Payer 15 500 FCFA (Étape 4/5)</span>
+                  </button>
+                </div>
+              )}
+
+              {/* 6. ARTICLE 5: 30 300 FCFA -> FINISH VIP 1 */}
+              {vip1CommanderStep === 'article5' && (
+                <div className="space-y-4 text-left">
+                  <div className="text-center space-y-1">
+                    <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
+                      Article de Mine VIP 1 • Étape Finale 5/5
+                    </span>
+                    <h3 className="text-xl font-black text-white font-display">
+                      Moule & Filtre Pureté Finale Lingots 24K
+                    </h3>
+                  </div>
+
+                  <div className="bg-slate-950 border border-amber-500/30 rounded-2xl p-4 space-y-3 relative overflow-hidden">
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 h-20 rounded-2xl border-2 border-amber-500/40 overflow-hidden shrink-0 shadow-xl relative bg-slate-900">
+                        <img src={imgGoldIngotFilter} alt="Moule & Filtre Pureté Finale" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] text-slate-400 font-mono block">Dernier Équipement (5/5)</span>
+                        <h4 className="text-sm font-extrabold text-white">Moule & Filtre Pureté Finale Lingots 24K</h4>
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <span className="text-xs text-slate-500 line-through font-mono">55 000 F</span>
+                          <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
+                            30 300 FCFA
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                      Réglez ce 5e et dernier article à <strong>30 300 FCFA</strong> pour valider définitivement le cycle VIP 1 et empocher votre récompense exceptionnelle de <strong>500 000 FCFA</strong> !
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handlePayArticle5}
+                    className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <Crown className="w-5 h-5 text-slate-950" />
+                    <span>Payer 30 300 FCFA & Recevoir 500 000 FCFA</span>
+                  </button>
+                </div>
+              )}
+
+              {/* 7. SUCCESS CELEBRATION MODAL */}
               {vip1CommanderStep === 'success' && (
                 <div className="py-2 space-y-4">
                   <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-green-400 flex items-center justify-center text-slate-950 shadow-2xl shadow-emerald-500/40 animate-bounce">
@@ -2334,7 +2526,7 @@ NOTIFY pgrst, 'reload schema';`}
                       Récompense de 500 000 FCFA !
                     </h3>
                     <p className="text-xs text-slate-300 leading-relaxed px-2">
-                      Félicitations ! Vous avez acquis vos 2 articles de mine (1 700 F + 1 800 F = 3 500 F) et validé votre VIP 1. Une prime de <strong>500 000 FCFA</strong> a été ajoutée à votre solde !
+                      Félicitations ! Vous avez acquis vos 5 articles de mine VIP 1 (1 820 F, 2 100 F, 6 300 F, 15 500 F, 30 300 F) et validé votre VIP 1. Une prime de <strong>500 000 FCFA</strong> a été ajoutée à votre solde !
                     </p>
                   </div>
 
@@ -2411,84 +2603,28 @@ NOTIFY pgrst, 'reload schema';`}
                 </div>
               )}
 
-              {/* 2. ARTICLE 1: 25 000 FCFA */}
+              {/* 2. ARTICLE 1/1: 50 000 FCFA */}
               {vip2CommanderStep === 'article1' && (
                 <div className="space-y-4 text-left">
                   <div className="text-center space-y-1">
                     <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
-                      Article de Mine VIP 2 • Étape 1/3
+                      Article de Mine VIP 2 • Étape Unique 1/1
                     </span>
                     <h3 className="text-xl font-black text-white font-display">
-                      Broyeur Hydraulique Quartz 24K VIP 2
+                      Station Industrielle d'Extraction Aurifère VIP 2
                     </h3>
                   </div>
 
                   <div className="bg-slate-950 border border-amber-500/30 rounded-2xl p-4 space-y-3 relative overflow-hidden">
                     <div className="flex items-center gap-3">
                       <div className="w-20 h-20 rounded-2xl border-2 border-amber-500/40 overflow-hidden shrink-0 shadow-xl relative bg-slate-900">
-                        <img src={imgHydraulicCrusher} alt="Broyeur Hydraulique Quartz 24K" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={imgGoldMiningRig} alt="Station Industrielle d'Extraction VIP 2" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">Équipement de Broyage</span>
-                        <h4 className="text-sm font-extrabold text-white">Broyeur Hydraulique Quartz 24K</h4>
+                        <span className="text-[10px] text-slate-400 font-mono block">Station Industrielle VIP 2</span>
+                        <h4 className="text-sm font-extrabold text-white">Station Industrielle Aurifère</h4>
                         <div className="flex items-center gap-2 pt-0.5">
-                          <span className="text-xs text-slate-500 line-through font-mono">45 000 F</span>
-                          <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                            25 000 FCFA
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Achetez ce premier article de mine VIP 2 à <strong>25 000 FCFA</strong> pour entamer le traitement des filons d'or haut rendement.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <button
-                      onClick={handlePayVip2Article1}
-                      className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
-                    >
-                      <CheckCircle className="w-5 h-5 text-slate-950" />
-                      <span>Payer 25 000 FCFA sur Solde</span>
-                    </button>
-
-                    <a
-                      href="https://geniuspay.ci/product/vip-2-13-aEUmFo"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-3 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-center"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>🔗 Payer via GeniusPay (Article VIP 2 • 1/3)</span>
-                    </a>
-                  </div>
-                </div>
-              )}
-
-              {/* 3. ARTICLE 2: 50 000 FCFA */}
-              {vip2CommanderStep === 'article2' && (
-                <div className="space-y-4 text-left">
-                  <div className="text-center space-y-1">
-                    <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
-                      Article de Mine VIP 2 • Étape 2/3
-                    </span>
-                    <h3 className="text-xl font-black text-white font-display">
-                      Refroidisseur de Creusets d'Or VIP 2
-                    </h3>
-                  </div>
-
-                  <div className="bg-slate-950 border border-amber-500/30 rounded-2xl p-4 space-y-3 relative overflow-hidden">
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 h-20 rounded-2xl border-2 border-amber-500/40 overflow-hidden shrink-0 shadow-xl relative bg-slate-900">
-                        <img src={imgCrucibleChiller} alt="Refroidisseur de Creusets d'Or" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">Système de Thermorégulation</span>
-                        <h4 className="text-sm font-extrabold text-white">Refroidisseur de Creusets d'Or</h4>
-                        <div className="flex items-center gap-2 pt-0.5">
-                          <span className="text-xs text-slate-500 line-through font-mono">90 000 F</span>
+                          <span className="text-xs text-slate-500 line-through font-mono">95 000 F</span>
                           <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
                             50 000 FCFA
                           </span>
@@ -2497,89 +2633,23 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Procurez-vous le second article à <strong>50 000 FCFA</strong> pour stabiliser la fusion des lingots aurifères.
+                      Réglez cet article unique de mine VIP 2 à <strong>50 000 FCFA</strong> pour valider définitivement le VIP 2 et percevoir immédiatement votre prime spéciale de <strong>1 000 000 FCFA</strong> !
                     </p>
                   </div>
 
                   <div className="space-y-2">
                     <button
-                      onClick={handlePayVip2Article2}
-                      className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
-                    >
-                      <CheckCircle className="w-5 h-5 text-slate-950" />
-                      <span>Payer 50 000 FCFA sur Solde</span>
-                    </button>
-
-                    <a
-                      href="https://geniuspay.ci/product/refroidisseur-de-creusets-dor-SU8bSn"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-3 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-center"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>🔗 Payer via GeniusPay (Article VIP 2 • 2/3)</span>
-                    </a>
-                  </div>
-                </div>
-              )}
-
-              {/* 4. ARTICLE 3: 75 000 FCFA */}
-              {vip2CommanderStep === 'article3' && (
-                <div className="space-y-4 text-left">
-                  <div className="text-center space-y-1">
-                    <span className="text-[10px] uppercase font-black tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block">
-                      Article de Mine VIP 2 • Étape 3/3
-                    </span>
-                    <h3 className="text-xl font-black text-white font-display">
-                      Moule & Filtre Spectrométrique VIP 2
-                    </h3>
-                  </div>
-
-                  <div className="bg-slate-950 border border-amber-500/30 rounded-2xl p-4 space-y-3 relative overflow-hidden">
-                    <div className="flex items-center gap-3">
-                      <div className="w-20 h-20 rounded-2xl border-2 border-amber-500/40 overflow-hidden shrink-0 shadow-xl relative bg-slate-900">
-                        <img src={imgGoldIngotFilter} alt="Moule & Filtre Spectrométrique" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] text-slate-400 font-mono block">Purification Finale VIP 2</span>
-                        <h4 className="text-sm font-extrabold text-white">Moule & Filtre Spectrométrique</h4>
-                        <div className="flex items-center gap-2 pt-0.5">
-                          <span className="text-xs text-slate-500 line-through font-mono">130 000 F</span>
-                          <span className="text-lg font-black font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                            75 000 FCFA
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez le 3e et dernier article à <strong>75 000 FCFA</strong> pour valider définitivement le VIP 2 et percevoir immédiatement votre prime spéciale de <strong>1 000 000 FCFA</strong> !
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <button
-                      onClick={handlePayVip2Article3}
+                      onClick={handlePayVip2Article1}
                       className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                     >
                       <Crown className="w-5 h-5 text-slate-950" />
-                      <span>Payer 75 000 FCFA sur Solde &amp; Recevoir 1 000 000 FCFA</span>
+                      <span>Payer 50 000 FCFA sur Solde &amp; Recevoir 1 000 000 FCFA</span>
                     </button>
-
-                    <a
-                      href="https://geniuspay.ci/product/moule-filtre-spectrometrique-PSbX7U"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-3 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 text-center"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>🔗 Payer via GeniusPay (Article VIP 2 • 3/3)</span>
-                    </a>
                   </div>
                 </div>
               )}
 
-              {/* 5. SUCCESS CELEBRATION MODAL (VIP 2) */}
+              {/* 3. SUCCESS CELEBRATION MODAL (VIP 2) */}
               {vip2CommanderStep === 'success' && (
                 <div className="py-2 space-y-4">
                   <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-green-400 flex items-center justify-center text-slate-950 shadow-2xl shadow-emerald-500/40 animate-bounce">
@@ -2594,7 +2664,7 @@ NOTIFY pgrst, 'reload schema';`}
                       Récompense de 1 000 000 FCFA !
                     </h3>
                     <p className="text-xs text-slate-300 leading-relaxed px-2">
-                      Félicitations ! Vous avez acquis vos 3 articles de mine VIP 2 (25 000 F + 50 000 F + 75 000 F) et validé votre VIP 2. Une prime de <strong>1 000 000 FCFA</strong> a été créditée sur votre solde !
+                      Félicitations ! Vous avez acquis votre article de mine VIP 2 (50 000 FCFA) et validé votre VIP 2. Une prime de <strong>1 000 000 FCFA</strong> a été créditée sur votre solde !
                     </p>
                   </div>
 
@@ -2683,17 +2753,7 @@ NOTIFY pgrst, 'reload schema';`}
               </div>
 
               <div className="space-y-2 pt-1">
-                {insufficientBalanceModal.articleName.includes('3/3') || insufficientBalanceModal.articleName.includes('Moule') || insufficientBalanceModal.requiredPrice === 75000 ? (
-                  <a
-                    href="https://geniuspay.ci/product/moule-filtre-spectrometrique-PSbX7U"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>🔗 Payer directement sur GeniusPay (VIP 2 Article 3/3 • 75 000 FCFA)</span>
-                  </a>
-                ) : insufficientBalanceModal.articleName.includes('2/3') || insufficientBalanceModal.articleName.includes('Refroidisseur') || insufficientBalanceModal.requiredPrice === 50000 ? (
+                {insufficientBalanceModal.articleName.includes('VIP 2') || insufficientBalanceModal.requiredPrice === 50000 ? (
                   <a
                     href="https://geniuspay.ci/product/refroidisseur-de-creusets-dor-SU8bSn"
                     target="_blank"
@@ -2701,17 +2761,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    <span>🔗 Payer directement sur GeniusPay (VIP 2 Article 2/3 • 50 000 FCFA)</span>
-                  </a>
-                ) : insufficientBalanceModal.articleName.includes('VIP 2') || insufficientBalanceModal.requiredPrice === 25000 ? (
-                  <a
-                    href="https://geniuspay.ci/product/vip-2-13-aEUmFo"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>🔗 Payer directement sur GeniusPay (VIP 2 Article 1/3 • 25 000 FCFA)</span>
+                    <span>🔗 Payer directement sur GeniusPay (VIP 2 • 50 000 FCFA)</span>
                   </a>
                 ) : (
                   <a
@@ -2727,8 +2777,9 @@ NOTIFY pgrst, 'reload schema';`}
 
                 <button
                   onClick={() => {
+                    const level = insufficientBalanceModal.articleName.includes('VIP 2') ? 'VIP 2' : 'VIP 1';
                     setInsufficientBalanceModal(null);
-                    if (onOpenRecharge) onOpenRecharge();
+                    handleTriggerMentorDepositPopup(level);
                   }}
                   className="w-full py-3 bg-slate-900 hover:bg-slate-850 text-amber-300 font-extrabold text-xs rounded-xl border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
