@@ -63,13 +63,13 @@ const TUTORIAL_STEPS: Step[] = [
     icon: Crown,
     color: 'from-amber-500 to-amber-600',
     tips: [
-      'VIP 1 (dès 3 500 F de solde) : Validez 2 articles pour 100 000 FCFA de gain total et 1 retrait test de 1 000 FCFA',
-      'VIP 2 (dès 10 000 F de solde) : Validez 3 équipements pour 500 000 FCFA de gain total et 2 retraits de 3 000 FCFA',
+      'VIP 1 (dès 3 500 F de solde) : Validez 2 articles pour 500 000 FCFA de gain total et 1 retrait test de 1 000 FCFA',
+      'VIP 2 (dès 10 000 F de solde) : Validez 3 équipements pour 1 000 000 FCFA de gain total et 2 retraits de 3 000 FCFA',
       'VIP 3 (Statut Société) : Devenez membre officiel avec salaire journalier garanti de 35 000 à 65 000 FCFA/jour'
     ],
     vipHighlight: {
-      vip1: 'Gain Total : 100 000 FCFA',
-      vip2: 'Gain Total : 500 000 FCFA',
+      vip1: 'Gain Total : 500 000 FCFA',
+      vip2: 'Gain Total : 1 000 000 FCFA',
       vip3: 'Salaire : 35k - 65k F/j'
     },
     actionLabel: 'Voir les Équipements de Mine',
@@ -218,12 +218,12 @@ export function TutorialOverlay({ isOpen, onClose, onNavigateTab }: TutorialOver
             <div className="grid grid-cols-3 gap-2 pt-1">
               <div className="bg-slate-950/80 border border-amber-500/30 rounded-xl p-2.5 text-center">
                 <span className="text-[10px] uppercase font-black text-amber-400 block font-mono">VIP 1</span>
-                <span className="text-[10px] font-bold text-emerald-400 block font-mono mt-0.5">100 000 F</span>
+                <span className="text-[10px] font-bold text-emerald-400 block font-mono mt-0.5">500 000 F</span>
                 <span className="text-[8px] text-slate-400 block mt-0.5">Dès 3 500 F</span>
               </div>
               <div className="bg-slate-950/80 border border-amber-500/30 rounded-xl p-2.5 text-center">
                 <span className="text-[10px] uppercase font-black text-amber-400 block font-mono">VIP 2</span>
-                <span className="text-[10px] font-bold text-emerald-400 block font-mono mt-0.5">500 000 F</span>
+                <span className="text-[10px] font-bold text-emerald-400 block font-mono mt-0.5">1 000 000 F</span>
                 <span className="text-[8px] text-slate-400 block mt-0.5">Dès 10 000 F</span>
               </div>
               <div className="bg-slate-950/80 border border-amber-500/30 rounded-xl p-2.5 text-center">

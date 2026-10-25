@@ -59,7 +59,7 @@ const SCENES: Scene[] = [
     duration: 7,
     title: "Des Revenus Massifs & Quotidiens",
     badge: "GAINS CERTIFIÉS",
-    narration: "Gagnez jusqu'à 100 000 FCFA avec le VIP 1, et plus de 500 000 FCFA avec le VIP 2. Les membres VIP 3 perçoivent un salaire quotidien de 35 000 à 65 000 FCFA !",
+    narration: "Gagnez jusqu'à 500 000 FCFA avec le VIP 1, et plus de 1 000 000 FCFA avec le VIP 2. Les membres VIP 3 perçoivent un salaire quotidien de 35 000 à 65 000 FCFA !",
     image: imgGoldVaultBars
   },
   {
@@ -218,10 +218,10 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
   // Handle counter animations in scene 2 & 3
   useEffect(() => {
     if (currentSceneIndex === 1) {
-      // Ramp from 10 000 to 500 000
+      // Ramp from 10 000 to 1 000 000
       let start = 10000;
-      const end = 500000;
-      const step = 25000;
+      const end = 1000000;
+      const step = 50000;
       const timer = setInterval(() => {
         start += step;
         if (start >= end) {
@@ -233,9 +233,9 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
       }, 70);
       return () => clearInterval(timer);
     } else if (currentSceneIndex === 2) {
-      setCounterBalance(250000);
+      setCounterBalance(500000);
     } else {
-      setCounterBalance(100000);
+      setCounterBalance(500000);
     }
   }, [currentSceneIndex]);
 
@@ -261,9 +261,9 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
 "Vous cherchez comment gagner de l'argent réel chaque jour depuis votre téléphone ? Découvrez GOLD YIELD, la plateforme numéro 1 d'investissement dans l'or physique en Afrique de l'Ouest !"
 
 🎬 SCÈNE 2 (00:06 - 00:13) : LES GAINS
-[Visuel : Compteur de gains qui explose à +500 000 FCFA avec le statut VIP]
+[Visuel : Compteur de gains qui explose à +1 000 000 FCFA avec le statut VIP]
 🗣️ VOIX-OFF :
-"Avec le VIP 1, touchez 100 000 FCFA ! Avec le VIP 2, empochez plus de 500 000 FCFA ! Et devenez membre officiel au VIP 3 pour percevoir un salaire quotidien de 35 000 à 65 000 FCFA par jour !"
+"Avec le VIP 1, touchez 500 000 FCFA ! Avec le VIP 2, empochez plus de 1 000 000 FCFA ! Et devenez membre officiel au VIP 3 pour percevoir un salaire quotidien de 35 000 à 65 000 FCFA par jour !"
 
 🎬 SCÈNE 3 (00:13 - 00:21) : LES RETRAITS INSTANTANÉS
 [Visuel : Notifications push Wave, Orange Money et MTN MoMo qui tombent en direct]
@@ -447,10 +447,10 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 px-3 py-1 rounded-full text-xs font-black font-mono">
-                        VIP 1 : +100 000 FCFA
+                        VIP 1 : +500 000 FCFA
                       </span>
                       <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full text-xs font-black font-mono">
-                        VIP 2 : +500 000 FCFA
+                        VIP 2 : +1 000 000 FCFA
                       </span>
                     </div>
 
@@ -743,7 +743,7 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
                     🗣️ Voix-off : « {scene.narration} »
                   </p>
                   <p className="text-[11px] text-slate-400">
-                    🎬 <strong className="text-slate-300">Visuel suggéré :</strong> {scene.id === 1 ? "Gros plan sur les lingots d'or 24K et le logo Gold Yield." : scene.id === 2 ? "Capture d'écran du solde montant à +500 000 FCFA avec les packs VIP." : scene.id === 3 ? "Notification SMS Wave et Orange Money confirmant la réception des fonds." : "Affichage du lien d'inscription avec le bonus de 500 FCFA."}
+                    🎬 <strong className="text-slate-300">Visuel suggéré :</strong> {scene.id === 1 ? "Gros plan sur les lingots d'or 24K et le logo Gold Yield." : scene.id === 2 ? "Capture d'écran du solde montant à +1 000 000 FCFA avec les packs VIP." : scene.id === 3 ? "Notification SMS Wave et Orange Money confirmant la réception des fonds." : "Affichage du lien d'inscription avec le bonus de 500 FCFA."}
                   </p>
                 </div>
               ))}
