@@ -44,7 +44,9 @@ import {
   Download,
   Share,
   Palette,
-  Database
+  Database,
+  UserCheck,
+  Headphones
 } from 'lucide-react';
 import { InvestmentPlan, ActiveInvestment, Transaction, DailyTask } from '../types';
 import { DEFAULT_PLANS } from '../data';
@@ -189,6 +191,23 @@ export function DashboardScreen({
     isVip2?: boolean;
     isVip3?: boolean;
   } | null>(null);
+
+  // Mentor Deposit Popup State: "Pour effectuer un dépôt, contactez votre mentor"
+  const [mentorDepositPopup, setMentorDepositPopup] = useState<{
+    show: boolean;
+    vipLevel: string;
+  } | null>(null);
+
+  const handleTriggerMentorDepositPopup = (vipLevel: string = 'VIP') => {
+    setVipLevelModal(null);
+    setMentorDepositPopup({
+      show: true,
+      vipLevel
+    });
+    if (showToast) {
+      showToast('Pour effectuer un dépôt, contactez votre mentor', 'info');
+    }
+  };
 
   // VIP 1 Completion state
   const [isVip1Finished, setIsVip1Finished] = useState<boolean>(() => {
@@ -713,7 +732,7 @@ export function DashboardScreen({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onOpenRecharge();
+                      handleTriggerMentorDepositPopup('VIP 1');
                     }}
                     className="px-3 py-1.5 bg-slate-950 hover:bg-slate-850 text-amber-300 font-bold text-xs rounded-xl shadow-md border border-amber-500/30 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
                   >
@@ -821,7 +840,7 @@ export function DashboardScreen({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onOpenRecharge();
+                    handleTriggerMentorDepositPopup('VIP 2');
                   }}
                   className="px-3 py-1.5 bg-slate-950 hover:bg-slate-850 text-amber-300 font-bold text-xs rounded-xl shadow-md border border-amber-500/30 flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
                 >
@@ -2010,10 +2029,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </button>
                   ) : (
                     <button
-                      onClick={() => {
-                        setVipLevelModal(null);
-                        onOpenRecharge();
-                      }}
+                      onClick={() => handleTriggerMentorDepositPopup('VIP 1')}
                       className="w-full py-3.5 bg-slate-800 hover:bg-slate-750 text-amber-300 font-black text-xs rounded-xl border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                     >
                       <Lock className="w-4 h-4 text-amber-400" />
@@ -2046,10 +2062,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </button>
                   ) : (
                     <button
-                      onClick={() => {
-                        setVipLevelModal(null);
-                        onOpenRecharge();
-                      }}
+                      onClick={() => handleTriggerMentorDepositPopup('VIP 2')}
                       className="w-full py-3.5 bg-slate-800 hover:bg-slate-750 text-amber-300 font-black text-xs rounded-xl border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                     >
                       <Lock className="w-4 h-4 text-amber-400" />
@@ -2067,8 +2080,8 @@ NOTIFY pgrst, 'reload schema';`}
 
                 <button
                   onClick={() => {
-                    setVipLevelModal(null);
-                    onOpenRecharge();
+                    const level = vipLevelModal.isVip2 ? 'VIP 2' : vipLevelModal.isVip1 ? 'VIP 1' : 'VIP 1 & 2';
+                    handleTriggerMentorDepositPopup(level);
                   }}
                   className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl transition-all shadow-lg shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-2"
                 >
@@ -2088,6 +2101,75 @@ NOTIFY pgrst, 'reload schema';`}
                 <button
                   onClick={() => setVipLevelModal(null)}
                   className="w-full py-2.5 bg-slate-950 hover:bg-slate-850 text-slate-400 hover:text-white font-bold text-xs rounded-xl border border-slate-800 transition-all cursor-pointer"
+                >
+                  Compris
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ==================== MENTOR DEPOSIT POPUP MODAL ==================== */}
+      <AnimatePresence>
+        {mentorDepositPopup?.show && (
+          <div className="fixed inset-0 z-[100] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 15 }}
+              className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-2 border-amber-500/60 rounded-3xl p-6 max-w-sm w-full shadow-2xl relative text-center space-y-4 overflow-hidden"
+            >
+              {/* Top ambient gold glow */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-amber-500/20 rounded-full blur-2xl pointer-events-none" />
+
+              <button
+                onClick={() => setMentorDepositPopup(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-full bg-slate-800/80 transition-colors cursor-pointer"
+                aria-label="Fermer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-slate-900 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-xl relative">
+                <UserCheck className="w-8 h-8 text-amber-400" />
+                <Sparkles className="w-4 h-4 text-yellow-300 absolute -top-1 -right-1 animate-pulse" />
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full inline-block font-mono">
+                  Assistance Dépôt • {mentorDepositPopup.vipLevel}
+                </span>
+                <h3 className="text-xl font-black text-white font-display">
+                  Validation de Dépôt
+                </h3>
+              </div>
+
+              {/* Exact user-requested message popup */}
+              <div className="p-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border-2 border-amber-500/50 rounded-2xl shadow-inner space-y-1">
+                <p className="text-base sm:text-lg font-black text-amber-300 leading-snug">
+                  Pour effectuer un dépôt, contactez votre mentor
+                </p>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed px-1">
+                Votre mentor attitré vous communiquera les instructions de recharge officielles pour activer votre adhésion <strong>{mentorDepositPopup.vipLevel}</strong> et valider vos gains en toute sécurité.
+              </p>
+
+              <div className="space-y-2 pt-2">
+                <a
+                  href="https://t.me/goldyieldservice"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <Headphones className="w-4 h-4 text-slate-950" />
+                  <span>Contacter mon Mentor</span>
+                </a>
+
+                <button
+                  onClick={() => setMentorDepositPopup(null)}
+                  className="w-full py-2.5 bg-slate-950 hover:bg-slate-850 text-slate-300 hover:text-white font-bold text-xs rounded-xl border border-slate-800 transition-all cursor-pointer"
                 >
                   Compris
                 </button>
