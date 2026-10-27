@@ -13,7 +13,7 @@ export function AssistantBubble() {
     },
     {
       q: "Quels sont les gains et salaires quotidiens ?",
-      a: "Dès l'inscription, vous recevez un bonus de 500 FCFA offert. Le VIP 1 rapporte un gain total garanti de 500 000 FCFA (5 articles : 1 820 F, 2 100 F, 6 300 F, 15 500 F et 30 300 F) avec 1 retrait test de 1 000 F. Le VIP 2 débloque un gain total garanti de 1 000 000 FCFA (1 article unique : 50 000 F) avec 2 retraits de 3 000 F. En VIP 3 (statut société officiel), vous percevez votre salaire quotidien de 35 000 FCFA à 65 000 FCFA par jour !"
+      a: "Dès l'inscription, vous recevez un bonus de 1 000 FCFA offert. Le VIP 1 rapporte un gain total garanti de 500 000 FCFA (5 articles : 1 820 F, 2 100 F, 6 300 F, 15 500 F et 30 300 F) avec 1 retrait test de 1 000 F. Le VIP 2 débloque un gain total garanti de 1 000 000 FCFA (1 article unique : 50 000 F) avec 2 retraits de 3 000 F. En VIP 3 (statut société officiel), vous percevez votre salaire quotidien de 35 000 FCFA à 65 000 FCFA par jour !"
     },
     {
       q: "Quelles sont les règles de retrait pour le VIP 1 et VIP 2 ?",
@@ -25,7 +25,7 @@ export function AssistantBubble() {
     },
     {
       q: "Combien puis-je gagner avec le parrainage d'équipe ?",
-      a: "Vous touchez 10% de commission instantanée sur chaque membre de votre équipe. Chaque nouveau membre reçoit également son bonus de bienvenue de 500 FCFA."
+      a: "Vous touchez 10% de commission instantanée sur chaque membre de votre équipe. Chaque nouveau membre reçoit également son bonus de bienvenue de 1 000 FCFA."
     }
   ];
 
@@ -157,8 +157,8 @@ export function AssistantBubble() {
                         1
                       </div>
                       <div className="space-y-0.5">
-                        <h6 className="text-xs font-bold text-white">Inscrivez-vous &amp; Touchez 500 FCFA</h6>
-                        <p className="text-[11px] text-slate-400">Créez votre compte gratuitement et recevez immédiatement votre bonus d'embauche de 500 FCFA offert.</p>
+                        <h6 className="text-xs font-bold text-white">Inscrivez-vous &amp; Touchez 1 000 FCFA</h6>
+                        <p className="text-[11px] text-slate-400">Créez votre compte gratuitement et recevez immédiatement votre bonus d'embauche de 1 000 FCFA offert.</p>
                       </div>
                     </div>
 

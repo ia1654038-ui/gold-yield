@@ -252,7 +252,7 @@ export async function dbCreateUser(userData: {
     name: userData.name,
     password: userData.password,
     invite_code: userData.invite_code || 'GOLDYIELD',
-    balance: userData.balance !== undefined ? userData.balance : 500,
+    balance: userData.balance !== undefined ? userData.balance : 1000,
     claimable_sum: 0,
     last_tick_time: Date.now(),
     created_at: new Date().toISOString()

@@ -49,7 +49,7 @@ const TUTORIAL_STEPS: Step[] = [
     icon: Sparkles,
     color: 'from-amber-400 via-yellow-500 to-amber-600',
     tips: [
-      'Bonus de bienvenue offert de 500 FCFA crédité dès votre inscription',
+      'Bonus de bienvenue offert de 1 000 FCFA crédité dès votre inscription',
       'Portefeuille sécurisé avec ID certifié et suivi des rendements en direct',
       'Compatibilité totale avec Mobile Money (Orange, MTN, Wave, Moov)'
     ],
@@ -113,7 +113,7 @@ const TUTORIAL_STEPS: Step[] = [
     color: 'from-amber-400 to-yellow-500',
     tips: [
       'Commission instantanée de +10% sur chaque recharge réalisée par vos filleuls',
-      'Vos invités reçoivent automatiquement leur bonus d\'accueil de 500 FCFA',
+      'Vos invités reçoivent automatiquement leur bonus d\'accueil de 1 000 FCFA',
       'Canal d\'assistance Telegram officiel @goldyieldservice disponible en continu'
     ],
     actionLabel: 'Commencer maintenant'

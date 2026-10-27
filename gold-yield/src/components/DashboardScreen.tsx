@@ -417,7 +417,7 @@ export function DashboardScreen({
     setVip2CommanderStep('loading');
   };
 
-  // VIP 1 Article 1: 1 820 FCFA
+  // VIP 1 Article 1: 1 820 FCFA -> Gain +100 000 FCFA
   const handlePayArticle1 = () => {
     if (balance < 1820) {
       setInsufficientBalanceModal({
@@ -429,6 +429,9 @@ export function DashboardScreen({
     }
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #1 (1 820F)", -1820);
+      setTimeout(() => {
+        onCompleteTask("Gain VIP 1 (Étape 1/5 validée)", 100000);
+      }, 200);
     }
     setVip1SavedStep('article2');
     if (userPhone) {
@@ -437,7 +440,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article2');
   };
 
-  // VIP 1 Article 2: 2 100 FCFA
+  // VIP 1 Article 2: 2 100 FCFA -> Gain +100 000 FCFA
   const handlePayArticle2 = () => {
     if (balance < 2100) {
       setInsufficientBalanceModal({
@@ -449,6 +452,9 @@ export function DashboardScreen({
     }
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #2 (2 100F)", -2100);
+      setTimeout(() => {
+        onCompleteTask("Gain VIP 1 (Étape 2/5 validée)", 100000);
+      }, 200);
     }
     setVip1SavedStep('article3');
     if (userPhone) {
@@ -457,7 +463,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article3');
   };
 
-  // VIP 1 Article 3: 6 300 FCFA
+  // VIP 1 Article 3: 6 300 FCFA -> Gain +100 000 FCFA
   const handlePayArticle3 = () => {
     if (balance < 6300) {
       setInsufficientBalanceModal({
@@ -469,6 +475,9 @@ export function DashboardScreen({
     }
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #3 (6 300F)", -6300);
+      setTimeout(() => {
+        onCompleteTask("Gain VIP 1 (Étape 3/5 validée)", 100000);
+      }, 200);
     }
     setVip1SavedStep('article4');
     if (userPhone) {
@@ -477,7 +486,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article4');
   };
 
-  // VIP 1 Article 4: 15 500 FCFA
+  // VIP 1 Article 4: 15 500 FCFA -> Gain +100 000 FCFA
   const handlePayArticle4 = () => {
     if (balance < 15500) {
       setInsufficientBalanceModal({
@@ -489,6 +498,9 @@ export function DashboardScreen({
     }
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #4 (15 500F)", -15500);
+      setTimeout(() => {
+        onCompleteTask("Gain VIP 1 (Étape 4/5 validée)", 100000);
+      }, 200);
     }
     setVip1SavedStep('article5');
     if (userPhone) {
@@ -497,7 +509,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article5');
   };
 
-  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (+500 000 FCFA)
+  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (+100 000 FCFA = 500 000 FCFA Total!)
   const handlePayArticle5 = () => {
     if (balance < 30300) {
       setInsufficientBalanceModal({
@@ -512,7 +524,7 @@ export function DashboardScreen({
     }
     setTimeout(() => {
       if (onCompleteTask) {
-        onCompleteTask("Récompense Validation VIP 1", 500000);
+        onCompleteTask("Gain Final VIP 1 (Étape 5/5 validée)", 100000);
       }
       setIsVip1Finished(true);
       setVip1SavedStep('article1');
@@ -570,6 +582,26 @@ export function DashboardScreen({
   // Calculate total user investment capital & balance status
   const totalInvestedSum = activeInvestments.reduce((sum, item) => sum + item.price, 0);
   const totalDailyRevenue = activeInvestments.reduce((sum, item) => sum + item.dailyProfit, 0);
+
+  // Progressive VIP 1 earnings accumulation (Total 500 000 FCFA distributed across the 5 articles)
+  // Step 1: 100 000 F, Step 2: 100 000 F, Step 3: 100 000 F, Step 4: 100 000 F, Step 5: 100 000 F
+  let accumulatedVip1Gains = 0;
+  if (isVip1Finished) {
+    accumulatedVip1Gains = 500000;
+  } else if (vip1SavedStep === 'article5') {
+    accumulatedVip1Gains = 400000;
+  } else if (vip1SavedStep === 'article4') {
+    accumulatedVip1Gains = 300000;
+  } else if (vip1SavedStep === 'article3') {
+    accumulatedVip1Gains = 200000;
+  } else if (vip1SavedStep === 'article2') {
+    accumulatedVip1Gains = 100000;
+  }
+
+  const accumulatedVip2Gains = isVip2Finished ? 1000000 : 0;
+  const totalVipGains = accumulatedVip1Gains + accumulatedVip2Gains;
+  // Capital to withdraw reflects the accumulated withdrawable funds (VIP gains and balance)
+  const withdrawableCapital = Math.max(balance, totalVipGains);
 
   // VIP 1 requires user balance to be >= 3500 FCFA
   const isVip1Unlocked = balance >= 3500;
@@ -657,7 +689,7 @@ export function DashboardScreen({
                        `Rejoignez notre équipe et travaillez directement depuis votre téléphone pour percevoir un salaire quotidien compris entre *35 000 FCFA et 65 000 FCFA par jour* !\n\n` +
                        `💰 *RÉMUNÉRATION & GAINS QUOTIDIENS :*\n` +
                        `💵 *Gains quotidiens :* De 35 000 FCFA à 65 000 FCFA par jour !\n` +
-                       `🎁 *Bonus de Bienvenue :* 500 FCFA offerts gratuitement dès votre inscription !\n` +
+                       `🎁 *Bonus de Bienvenue :* 1 000 FCFA offerts gratuitement dès votre inscription !\n` +
                        `🔹 *Missions quotidiennes :* Exécutez des commandes simples et retirez votre argent tous les jours.\n\n` +
                        `💸 *Retraits Instantanés :* Recevez vos revenus directement sur votre compte Mobile Money (Wave, Orange, MTN, Moov) !\n\n` +
                        `👉 *Inscrivez-vous gratuitement et commencez à travailler dès aujourd'hui :*\n` +
@@ -1050,9 +1082,21 @@ NOTIFY pgrst, 'reload schema';`}
               {/* Quick Stats inside the main wallet */}
               <div className="grid grid-cols-2 gap-3 pt-4 mt-5 border-t border-white/[0.08] relative z-10">
                 <div className="bg-slate-950/50 border border-white/[0.04] rounded-2xl p-3">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Capital Investi</p>
-                  <p className="text-base font-black font-mono text-white mt-0.5">
-                    {totalInvestedSum.toLocaleString('fr-FR')} FCFA
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] text-amber-400 uppercase font-bold tracking-wider">Capital à retirer</p>
+                    <span className="text-[9px] font-mono text-slate-400">VIP 1 & 2</span>
+                  </div>
+                  <p className="text-base font-black font-mono text-emerald-400 mt-0.5">
+                    {withdrawableCapital.toLocaleString('fr-FR')} FCFA
+                  </p>
+                  <p className="text-[9px] text-slate-400 font-mono mt-0.5 truncate">
+                    {isVip1Finished ? (
+                      <span className="text-emerald-400 font-bold">✓ VIP 1 débloqué (500 000 F)</span>
+                    ) : accumulatedVip1Gains > 0 ? (
+                      <span className="text-amber-300 font-semibold">Cumul VIP 1 : {accumulatedVip1Gains.toLocaleString('fr-FR')} / 500 000 F</span>
+                    ) : (
+                      <span>Cumul VIP 1 : 0 / 500 000 F</span>
+                    )}
                   </p>
                 </div>
                 <div className="bg-slate-950/50 border border-white/[0.04] rounded-2xl p-3">
@@ -1181,7 +1225,7 @@ NOTIFY pgrst, 'reload schema';`}
               </span>
               <h4 className="text-lg font-black text-white font-display">Partagez l'opportunité et gagnez +10%</h4>
               <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-                Gagnez une commission instantanée de 10% sur chaque recharge effectuée par vos filleuls. Vos invités bénéficient également de 500 FCFA de bienvenue.
+                Gagnez une commission instantanée de 10% sur chaque recharge effectuée par vos filleuls. Vos invités bénéficient également de 1 000 FCFA de bienvenue.
               </p>
             </div>
 
@@ -2321,7 +2365,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Achetez le premier article au prix de <strong>1 820 FCFA</strong> pour lancer la prospection aurifère du VIP 1.
+                      Achetez le premier article au prix de <strong>1 820 FCFA</strong> et recevez immédiatement <strong>+100 000 FCFA</strong> dans votre capital à retirer !
                     </p>
                   </div>
 
@@ -2330,7 +2374,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 1 820 FCFA (Étape 1/5)</span>
+                    <span>Payer 1 820 FCFA & Recevoir +100 000 FCFA (Étape 1/5)</span>
                   </button>
                 </div>
               )}
@@ -2365,7 +2409,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez le second équipement à <strong>2 100 FCFA</strong> pour analyser la teneur en carats de vos filons.
+                      Réglez le second équipement à <strong>2 100 FCFA</strong> et encaissez <strong>+100 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 200 000 FCFA).
                     </p>
                   </div>
 
@@ -2374,7 +2418,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 2 100 FCFA (Étape 2/5)</span>
+                    <span>Payer 2 100 FCFA & Recevoir +100 000 FCFA (Étape 2/5)</span>
                   </button>
                 </div>
               )}
@@ -2409,7 +2453,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Acquérez le 3e équipement de broyage à <strong>6 300 FCFA</strong> pour pulvériser le minerai aurifère.
+                      Acquérez le 3e équipement de broyage à <strong>6 300 FCFA</strong> et recevez <strong>+100 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 300 000 FCFA).
                     </p>
                   </div>
 
@@ -2418,7 +2462,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 6 300 FCFA (Étape 3/5)</span>
+                    <span>Payer 6 300 FCFA & Recevoir +100 000 FCFA (Étape 3/5)</span>
                   </button>
                 </div>
               )}
@@ -2453,7 +2497,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez le 4e article à <strong>15 500 FCFA</strong> pour stabiliser la température de fusion avant le moulage final.
+                      Réglez le 4e article à <strong>15 500 FCFA</strong> et recevez <strong>+100 000 FCFA</strong> de récompense immédiate (cumul : 400 000 FCFA).
                     </p>
                   </div>
 
@@ -2462,7 +2506,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 15 500 FCFA (Étape 4/5)</span>
+                    <span>Payer 15 500 FCFA & Recevoir +100 000 FCFA (Étape 4/5)</span>
                   </button>
                 </div>
               )}
@@ -2497,7 +2541,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez ce 5e et dernier article à <strong>30 300 FCFA</strong> pour valider définitivement le cycle VIP 1 et empocher votre récompense exceptionnelle de <strong>500 000 FCFA</strong> !
+                      Réglez ce 5e et dernier article à <strong>30 300 FCFA</strong> pour clôturer définitivement le cycle VIP 1 et toucher votre dernière tranche de <strong>100 000 FCFA</strong> (gain total : <strong>500 000 FCFA</strong>) !
                     </p>
                   </div>
 
@@ -2506,7 +2550,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Crown className="w-5 h-5 text-slate-950" />
-                    <span>Payer 30 300 FCFA & Recevoir 500 000 FCFA</span>
+                    <span>Payer 30 300 FCFA & Finaliser les 500 000 FCFA</span>
                   </button>
                 </div>
               )}
@@ -2526,7 +2570,7 @@ NOTIFY pgrst, 'reload schema';`}
                       Récompense de 500 000 FCFA !
                     </h3>
                     <p className="text-xs text-slate-300 leading-relaxed px-2">
-                      Félicitations ! Vous avez acquis vos 5 articles de mine VIP 1 (1 820 F, 2 100 F, 6 300 F, 15 500 F, 30 300 F) et validé votre VIP 1. Une prime de <strong>500 000 FCFA</strong> a été ajoutée à votre solde !
+                      Félicitations ! Vous avez acquis vos 5 articles de mine VIP 1 (1 820 F, 2 100 F, 6 300 F, 15 500 F, 30 300 F) et complété votre VIP 1. Votre gain total de <strong>500 000 FCFA</strong> a été intégralement débloqué dans votre capital à retirer !
                     </p>
                   </div>
 

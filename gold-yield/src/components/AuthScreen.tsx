@@ -289,7 +289,7 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
               <div className="flex justify-between items-center">
                 <label className="text-xs font-semibold text-slate-300 block">Code de Parrainage (Optionnel)</label>
                 <span className="text-[10px] text-gold-400 flex items-center gap-1">
-                  <Gift className="w-3 h-3" /> +500 FCFA Bonus
+                  <Gift className="w-3 h-3" /> +1 000 FCFA Bonus
                 </span>
               </div>
               <div className="relative">

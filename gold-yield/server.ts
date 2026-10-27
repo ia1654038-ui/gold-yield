@@ -79,7 +79,7 @@ app.post('/api/auth/register', async (req, res) => {
       name,
       password,
       invite_code: inviteCode || 'GOLDYIELD',
-      balance: 500
+      balance: 1000
     });
 
     res.json({

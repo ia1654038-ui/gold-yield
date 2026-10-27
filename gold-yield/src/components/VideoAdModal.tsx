@@ -75,7 +75,7 @@ const SCENES: Scene[] = [
     duration: 7,
     title: "Rejoignez l'Élite & Encaissez Vos Gains",
     badge: "OFFRE LIMITÉE",
-    narration: "Inscrivez-vous aujourd'hui et recevez immédiatement 500 FCFA de bonus d'accueil offert. Ne manquez pas cette opportunité !",
+    narration: "Inscrivez-vous aujourd'hui et recevez immédiatement 1 000 FCFA de bonus d'accueil offert. Ne manquez pas cette opportunité !",
     image: imgGoldMiningRig
   }
 ];
@@ -271,9 +271,9 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
 "Les retraits sont 100% instantanés ! Vous retirez vos gains directement sur Wave, Orange Money, MTN ou Moov en moins de 3 minutes chrono, 7 jours sur 7."
 
 🎬 SCÈNE 4 (00:21 - 00:30) : APPEL À L'ACTION
-[Visuel : 500 FCFA offerts à l'inscription et lien cliquable]
+[Visuel : 1 000 FCFA offerts à l'inscription et lien cliquable]
 🗣️ VOIX-OFF :
-"Rejoignez dès aujourd'hui plus de 15 000 membres et recevez 500 FCFA de bonus offert dès votre inscription ! Cliquez sur le lien pour commencer immédiatement !"
+"Rejoignez dès aujourd'hui plus de 15 000 membres et recevez 1 000 FCFA de bonus offert dès votre inscription ! Cliquez sur le lien pour commencer immédiatement !"
 
 👉 Lien : ${typeof window !== 'undefined' ? window.location.origin : 'https://goldyield.com'}
 #GoldYield #Investissement #WaveMoney #OrangeMoney #MTNMoney #RevenusEnLigne #GainsQuotidiens`;
@@ -528,7 +528,7 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
                   >
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-amber-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase shadow-lg shadow-red-500/30">
                       <Flame className="w-4 h-4" />
-                      <span>500 FCFA Offerts Dès L'Inscription !</span>
+                      <span>1 000 FCFA Offerts Dès L'Inscription !</span>
                     </div>
 
                     <h2 className="text-2xl sm:text-4xl md:text-5xl font-black font-display text-white leading-tight">
@@ -743,7 +743,7 @@ export function VideoAdModal({ isOpen, onClose, onOpenRegister }: VideoAdModalPr
                     🗣️ Voix-off : « {scene.narration} »
                   </p>
                   <p className="text-[11px] text-slate-400">
-                    🎬 <strong className="text-slate-300">Visuel suggéré :</strong> {scene.id === 1 ? "Gros plan sur les lingots d'or 24K et le logo Gold Yield." : scene.id === 2 ? "Capture d'écran du solde montant à +1 000 000 FCFA avec les packs VIP." : scene.id === 3 ? "Notification SMS Wave et Orange Money confirmant la réception des fonds." : "Affichage du lien d'inscription avec le bonus de 500 FCFA."}
+                    🎬 <strong className="text-slate-300">Visuel suggéré :</strong> {scene.id === 1 ? "Gros plan sur les lingots d'or 24K et le logo Gold Yield." : scene.id === 2 ? "Capture d'écran du solde montant à +1 000 000 FCFA avec les packs VIP." : scene.id === 3 ? "Notification SMS Wave et Orange Money confirmant la réception des fonds." : "Affichage du lien d'inscription avec le bonus de 1 000 FCFA."}
                   </p>
                 </div>
               ))}
