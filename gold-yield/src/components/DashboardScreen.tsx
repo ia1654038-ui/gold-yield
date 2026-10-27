@@ -417,7 +417,7 @@ export function DashboardScreen({
     setVip2CommanderStep('loading');
   };
 
-  // VIP 1 Article 1: 1 820 FCFA -> Gain +100 000 FCFA
+  // VIP 1 Article 1: 1 820 FCFA -> Gain +96 000 FCFA
   const handlePayArticle1 = () => {
     if (balance < 1820) {
       setInsufficientBalanceModal({
@@ -430,7 +430,7 @@ export function DashboardScreen({
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #1 (1 820F)", -1820);
       setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 1/5 validée)", 100000);
+        onCompleteTask("Gain VIP 1 (Étape 1/5 validée)", 96000);
       }, 200);
     }
     setVip1SavedStep('article2');
@@ -440,7 +440,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article2');
   };
 
-  // VIP 1 Article 2: 2 100 FCFA -> Gain +100 000 FCFA
+  // VIP 1 Article 2: 2 100 FCFA -> Gain +96 000 FCFA
   const handlePayArticle2 = () => {
     if (balance < 2100) {
       setInsufficientBalanceModal({
@@ -453,7 +453,7 @@ export function DashboardScreen({
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #2 (2 100F)", -2100);
       setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 2/5 validée)", 100000);
+        onCompleteTask("Gain VIP 1 (Étape 2/5 validée)", 96000);
       }, 200);
     }
     setVip1SavedStep('article3');
@@ -463,7 +463,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article3');
   };
 
-  // VIP 1 Article 3: 6 300 FCFA -> Gain +100 000 FCFA
+  // VIP 1 Article 3: 6 300 FCFA -> Gain +96 000 FCFA
   const handlePayArticle3 = () => {
     if (balance < 6300) {
       setInsufficientBalanceModal({
@@ -476,7 +476,7 @@ export function DashboardScreen({
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #3 (6 300F)", -6300);
       setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 3/5 validée)", 100000);
+        onCompleteTask("Gain VIP 1 (Étape 3/5 validée)", 96000);
       }, 200);
     }
     setVip1SavedStep('article4');
@@ -486,7 +486,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article4');
   };
 
-  // VIP 1 Article 4: 15 500 FCFA -> Gain +100 000 FCFA
+  // VIP 1 Article 4: 15 500 FCFA -> Gain +96 000 FCFA
   const handlePayArticle4 = () => {
     if (balance < 15500) {
       setInsufficientBalanceModal({
@@ -499,7 +499,7 @@ export function DashboardScreen({
     if (onCompleteTask) {
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #4 (15 500F)", -15500);
       setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 4/5 validée)", 100000);
+        onCompleteTask("Gain VIP 1 (Étape 4/5 validée)", 96000);
       }, 200);
     }
     setVip1SavedStep('article5');
@@ -509,7 +509,7 @@ export function DashboardScreen({
     setVip1CommanderStep('article5');
   };
 
-  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (+100 000 FCFA = 500 000 FCFA Total!)
+  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (+96 000 FCFA = 480 000 FCFA Total!)
   const handlePayArticle5 = () => {
     if (balance < 30300) {
       setInsufficientBalanceModal({
@@ -524,7 +524,7 @@ export function DashboardScreen({
     }
     setTimeout(() => {
       if (onCompleteTask) {
-        onCompleteTask("Gain Final VIP 1 (Étape 5/5 validée)", 100000);
+        onCompleteTask("Gain Final VIP 1 (Étape 5/5 validée)", 96000);
       }
       setIsVip1Finished(true);
       setVip1SavedStep('article1');
@@ -544,7 +544,7 @@ export function DashboardScreen({
     }, 250);
   };
 
-  // VIP 2 Single Article 1/1: 50 000 FCFA -> Finish VIP 2 (+1 000 000 FCFA)
+  // VIP 2 Single Article 1/1: 50 000 FCFA -> Finish VIP 2 (+800 000 FCFA)
   const handlePayVip2Article1 = () => {
     if (balance < 50000) {
       setInsufficientBalanceModal({
@@ -559,7 +559,7 @@ export function DashboardScreen({
     }
     setTimeout(() => {
       if (onCompleteTask) {
-        onCompleteTask("Récompense Validation VIP 2", 1000000);
+        onCompleteTask("Récompense Validation VIP 2", 800000);
       }
       setIsVip2Finished(true);
       setVip2SavedStep('article1');
@@ -583,22 +583,22 @@ export function DashboardScreen({
   const totalInvestedSum = activeInvestments.reduce((sum, item) => sum + item.price, 0);
   const totalDailyRevenue = activeInvestments.reduce((sum, item) => sum + item.dailyProfit, 0);
 
-  // Progressive VIP 1 earnings accumulation (Total 500 000 FCFA distributed across the 5 articles)
-  // Step 1: 100 000 F, Step 2: 100 000 F, Step 3: 100 000 F, Step 4: 100 000 F, Step 5: 100 000 F
+  // Progressive VIP 1 earnings accumulation (Total 480 000 FCFA distributed across the 5 articles)
+  // Step 1: 96 000 F, Step 2: 96 000 F, Step 3: 96 000 F, Step 4: 96 000 F, Step 5: 96 000 F
   let accumulatedVip1Gains = 0;
   if (isVip1Finished) {
-    accumulatedVip1Gains = 500000;
+    accumulatedVip1Gains = 480000;
   } else if (vip1SavedStep === 'article5') {
-    accumulatedVip1Gains = 400000;
+    accumulatedVip1Gains = 384000;
   } else if (vip1SavedStep === 'article4') {
-    accumulatedVip1Gains = 300000;
+    accumulatedVip1Gains = 288000;
   } else if (vip1SavedStep === 'article3') {
-    accumulatedVip1Gains = 200000;
+    accumulatedVip1Gains = 192000;
   } else if (vip1SavedStep === 'article2') {
-    accumulatedVip1Gains = 100000;
+    accumulatedVip1Gains = 96000;
   }
 
-  const accumulatedVip2Gains = isVip2Finished ? 1000000 : 0;
+  const accumulatedVip2Gains = isVip2Finished ? 800000 : 0;
   const totalVipGains = accumulatedVip1Gains + accumulatedVip2Gains;
   // Capital to withdraw reflects the accumulated VIP earnings (starts at 0 FCFA before any purchase)
   const withdrawableCapital = totalVipGains;
@@ -723,7 +723,7 @@ export function DashboardScreen({
               ? 'Niveau Membre VIP 1 — Terminé & Validé !'
               : isVip1Unlocked ? 'Niveau Membre VIP 1 — Accès Débloqué !' : 'Niveau Membre VIP 1',
             subtitle: isVip1Finished
-              ? 'Félicitations ! Vous avez complété les articles du VIP 1 et empoché 500 000 FCFA !'
+              ? 'Félicitations ! Vous avez complété les articles du VIP 1 et empoché 480 000 FCFA !'
               : isVip1Unlocked
               ? `Votre solde est de ${balance.toLocaleString('fr-FR')} FCFA. Cliquez sur Commander pour acheter les articles de mine !`
               : 'Un solde d\'au moins 3 500 FCFA sur votre compte débloque l\'accès au VIP 1.',
@@ -753,13 +753,13 @@ export function DashboardScreen({
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-black font-mono text-white">3 500 FCFA</span>
               <span className="text-[10px] font-black bg-emerald-500/15 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-mono shadow-sm">
-                Gain Total : 500 000 FCFA
+                Gain Total : 480 000 FCFA
               </span>
             </div>
             
             {isVip1Finished ? (
               <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg inline-block bg-emerald-950/80 text-emerald-300 border border-emerald-400/30">
-                ✓ VIP 1 Terminé (+500 000F)
+                ✓ VIP 1 Terminé (+480 000F)
               </span>
             ) : (
               <div className="flex flex-col gap-1.5 items-start pt-0.5">
@@ -816,7 +816,7 @@ export function DashboardScreen({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
               <span className="absolute bottom-1 right-1 text-[8px] font-mono font-bold text-amber-300 bg-black/70 px-1.5 py-0.5 rounded backdrop-blur-xs">
-                500k F
+                480k F
               </span>
             </div>
             <span className="text-[8px] font-mono font-bold text-slate-400 tracking-wider">CERTIFIÉ VIP 1</span>
@@ -832,7 +832,7 @@ export function DashboardScreen({
               ? 'Niveau Membre VIP 2 — Terminé & Validé !'
               : isVip2Unlocked ? 'Niveau Membre VIP 2 — Accès Débloqué !' : 'Niveau Membre VIP 2',
             subtitle: isVip2Finished
-              ? 'Félicitations ! Vous avez accompli le VIP 2 (50 000 FCFA) et empoché 1 000 000 FCFA !'
+              ? 'Félicitations ! Vous avez accompli le VIP 2 (50 000 FCFA) et empoché 800 000 FCFA !'
               : isVip2Unlocked
               ? 'Félicitations ! VIP 2 Débloqué (Solde ≥ 10 000 FCFA). Cliquez sur Commander pour passer votre commande VIP 2 (50 000 FCFA) !'
               : 'Pour accéder au VIP 2, le solde de votre compte doit être supérieur ou égal à 10 000 FCFA !',
@@ -862,13 +862,13 @@ export function DashboardScreen({
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-black font-mono text-white">10 000 FCFA</span>
               <span className="text-[10px] font-black bg-emerald-500/15 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30 font-mono shadow-sm">
-                Gain Total : 1 000 000 FCFA
+                Gain Total : 800 000 FCFA
               </span>
             </div>
             
             {isVip2Finished ? (
               <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg inline-block bg-emerald-950/80 text-emerald-300 border border-emerald-400/30">
-                ✓ VIP 2 Terminé (+1 000 000F)
+                ✓ VIP 2 Terminé (+800 000F)
               </span>
             ) : isVip2Unlocked ? (
               <div className="flex flex-col gap-1.5 items-start pt-0.5">
@@ -917,7 +917,7 @@ export function DashboardScreen({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
               <span className="absolute bottom-1 right-1 text-[8px] font-mono font-bold text-emerald-300 bg-black/70 px-1.5 py-0.5 rounded backdrop-blur-xs">
-                1M F
+                800k F
               </span>
             </div>
             <span className="text-[8px] font-mono font-bold text-slate-400 tracking-wider">CERTIFIÉ VIP 2</span>
@@ -1091,11 +1091,11 @@ NOTIFY pgrst, 'reload schema';`}
                   </p>
                   <p className="text-[9px] text-slate-400 font-mono mt-0.5 truncate">
                     {isVip1Finished ? (
-                      <span className="text-emerald-400 font-bold">✓ VIP 1 débloqué (500 000 F)</span>
+                      <span className="text-emerald-400 font-bold">✓ VIP 1 débloqué (480 000 F)</span>
                     ) : accumulatedVip1Gains > 0 ? (
-                      <span className="text-amber-300 font-semibold">Cumul VIP 1 : {accumulatedVip1Gains.toLocaleString('fr-FR')} / 500 000 F</span>
+                      <span className="text-amber-300 font-semibold">Cumul VIP 1 : {accumulatedVip1Gains.toLocaleString('fr-FR')} / 480 000 F</span>
                     ) : (
-                      <span>Cumul VIP 1 : 0 / 500 000 F</span>
+                      <span>Cumul VIP 1 : 0 / 480 000 F</span>
                     )}
                   </p>
                 </div>
@@ -1195,7 +1195,7 @@ NOTIFY pgrst, 'reload schema';`}
                     Gros Gains & Retraits Instantanés Mobile Money
                   </h4>
                   <p className="text-[11px] sm:text-xs text-slate-300">
-                    Découvrez comment les investisseurs perçoivent jusqu'à 1 000 000 FCFA avec retraits Wave & Orange Money.
+                    Découvrez comment les investisseurs perçoivent jusqu'à 800 000 FCFA avec retraits Wave & Orange Money.
                   </p>
                 </div>
               </div>
@@ -1419,20 +1419,20 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
                     <p className="text-xs text-slate-300">
                       {vip1SavedStep === 'article5'
-                        ? "Étape 5 / 5 : Plus qu'un dernier article à régler (30 300 F) pour empocher vos 500 000 FCFA !"
+                        ? "Étape 5 / 5 : Plus qu'un dernier article à régler (30 300 F) pour empocher vos 480 000 FCFA !"
                         : vip1SavedStep === 'article4'
                         ? "Étape 4 / 5 : Réglez le 4e article (15 500 F) pour accéder à l'étape finale du VIP 1."
                         : vip1SavedStep === 'article3'
                         ? "Étape 3 / 5 : Réglez le 3e article (6 300 F) pour continuer votre progression VIP 1."
                         : vip1SavedStep === 'article2' 
-                        ? "Étape 2 / 5 : Réglez le 2e article (2 100 F) pour avancer vers la récompense de 500 000 FCFA."
-                        : "Étape 1 / 5 : Complétez les 5 articles VIP 1 (dès 1 820 F) pour empocher vos 500 000 FCFA de gain total."}
+                        ? "Étape 2 / 5 : Réglez le 2e article (2 100 F) pour avancer vers la récompense de 480 000 FCFA."
+                        : "Étape 1 / 5 : Complétez les 5 articles VIP 1 (dès 1 820 F) pour empocher vos 480 000 FCFA de gain total."}
                     </p>
                   </div>
 
                   <div className="text-left sm:text-right shrink-0 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
                     <span className="text-[9px] uppercase font-bold text-slate-400 block font-mono">Gain Total Garanti</span>
-                    <span className="text-base font-black font-mono text-emerald-400">+500 000 FCFA</span>
+                    <span className="text-base font-black font-mono text-emerald-400">+480 000 FCFA</span>
                   </div>
                 </div>
 
@@ -1537,13 +1537,13 @@ NOTIFY pgrst, 'reload schema';`}
                       </span>
                     </div>
                     <p className="text-xs text-slate-300">
-                      Étape Unique 1 / 1 : Réglez l'article unique de mine VIP 2 à 50 000 F pour débloquer immédiatement vos 1 000 000 FCFA !
+                      Étape Unique 1 / 1 : Réglez l'article unique de mine VIP 2 à 50 000 F pour débloquer immédiatement vos 800 000 FCFA !
                     </p>
                   </div>
 
                   <div className="text-left sm:text-right shrink-0 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
                     <span className="text-[9px] uppercase font-bold text-slate-400 block font-mono">Gain Total Garanti</span>
-                    <span className="text-base font-black font-mono text-emerald-400">+1 000 000 FCFA</span>
+                    <span className="text-base font-black font-mono text-emerald-400">+800 000 FCFA</span>
                   </div>
                 </div>
 
@@ -2102,7 +2102,7 @@ NOTIFY pgrst, 'reload schema';`}
                   <p className="text-xs text-slate-300 leading-relaxed">
                     {isVip1Finished ? (
                       <span>
-                        Félicitations ! Vous avez accompli l'ensemble des 5 commandes d'articles du <strong>VIP 1</strong> (1 820F, 2 100F, 6 300F, 15 500F, 30 300F) et empoché la récompense globale de <strong>500 000 FCFA</strong>. Ce niveau est désormais sauvegardé et définitivement bloqué.
+                        Félicitations ! Vous avez accompli l'ensemble des 5 commandes d'articles du <strong>VIP 1</strong> (1 820F, 2 100F, 6 300F, 15 500F, 30 300F) et empoché la récompense globale de <strong>480 000 FCFA</strong>. Ce niveau est désormais sauvegardé et définitivement bloqué.
                       </span>
                     ) : isVip1Unlocked ? (
                       <span>
@@ -2365,7 +2365,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Achetez le premier article au prix de <strong>1 820 FCFA</strong> et recevez immédiatement <strong>+100 000 FCFA</strong> dans votre capital à retirer !
+                      Achetez le premier article au prix de <strong>1 820 FCFA</strong> et recevez immédiatement <strong>+96 000 FCFA</strong> dans votre capital à retirer !
                     </p>
                   </div>
 
@@ -2374,7 +2374,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 1 820 FCFA & Recevoir +100 000 FCFA (Étape 1/5)</span>
+                    <span>Payer 1 820 FCFA & Recevoir +96 000 FCFA (Étape 1/5)</span>
                   </button>
                 </div>
               )}
@@ -2409,7 +2409,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez le second équipement à <strong>2 100 FCFA</strong> et encaissez <strong>+100 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 200 000 FCFA).
+                      Réglez le second équipement à <strong>2 100 FCFA</strong> et encaissez <strong>+96 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 192 000 FCFA).
                     </p>
                   </div>
 
@@ -2418,7 +2418,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 2 100 FCFA & Recevoir +100 000 FCFA (Étape 2/5)</span>
+                    <span>Payer 2 100 FCFA & Recevoir +96 000 FCFA (Étape 2/5)</span>
                   </button>
                 </div>
               )}
@@ -2453,7 +2453,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Acquérez le 3e équipement de broyage à <strong>6 300 FCFA</strong> et recevez <strong>+100 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 300 000 FCFA).
+                      Acquérez le 3e équipement de broyage à <strong>6 300 FCFA</strong> et recevez <strong>+96 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 288 000 FCFA).
                     </p>
                   </div>
 
@@ -2462,7 +2462,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 6 300 FCFA & Recevoir +100 000 FCFA (Étape 3/5)</span>
+                    <span>Payer 6 300 FCFA & Recevoir +96 000 FCFA (Étape 3/5)</span>
                   </button>
                 </div>
               )}
@@ -2497,7 +2497,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez le 4e article à <strong>15 500 FCFA</strong> et recevez <strong>+100 000 FCFA</strong> de récompense immédiate (cumul : 400 000 FCFA).
+                      Réglez le 4e article à <strong>15 500 FCFA</strong> et recevez <strong>+96 000 FCFA</strong> de récompense immédiate (cumul : 384 000 FCFA).
                     </p>
                   </div>
 
@@ -2506,7 +2506,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 15 500 FCFA & Recevoir +100 000 FCFA (Étape 4/5)</span>
+                    <span>Payer 15 500 FCFA & Recevoir +96 000 FCFA (Étape 4/5)</span>
                   </button>
                 </div>
               )}
@@ -2541,7 +2541,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez ce 5e et dernier article à <strong>30 300 FCFA</strong> pour clôturer définitivement le cycle VIP 1 et toucher votre dernière tranche de <strong>100 000 FCFA</strong> (gain total : <strong>500 000 FCFA</strong>) !
+                      Réglez ce 5e et dernier article à <strong>30 300 FCFA</strong> pour clôturer définitivement le cycle VIP 1 et toucher votre dernière tranche de <strong>96 000 FCFA</strong> (gain total : <strong>480 000 FCFA</strong>) !
                     </p>
                   </div>
 
@@ -2550,7 +2550,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Crown className="w-5 h-5 text-slate-950" />
-                    <span>Payer 30 300 FCFA & Finaliser les 500 000 FCFA</span>
+                    <span>Payer 30 300 FCFA & Finaliser les 480 000 FCFA</span>
                   </button>
                 </div>
               )}
@@ -2567,10 +2567,10 @@ NOTIFY pgrst, 'reload schema';`}
                       ✓ VIP 1 Terminé avec Succès
                     </span>
                     <h3 className="text-2xl font-black text-white font-display">
-                      Récompense de 500 000 FCFA !
+                      Récompense de 480 000 FCFA !
                     </h3>
                     <p className="text-xs text-slate-300 leading-relaxed px-2">
-                      Félicitations ! Vous avez acquis vos 5 articles de mine VIP 1 (1 820 F, 2 100 F, 6 300 F, 15 500 F, 30 300 F) et complété votre VIP 1. Votre gain total de <strong>500 000 FCFA</strong> a été intégralement débloqué dans votre capital à retirer !
+                      Félicitations ! Vous avez acquis vos 5 articles de mine VIP 1 (1 820 F, 2 100 F, 6 300 F, 15 500 F, 30 300 F) et complété votre VIP 1. Votre gain total de <strong>480 000 FCFA</strong> a été intégralement débloqué dans votre capital à retirer !
                     </p>
                   </div>
 
@@ -2677,7 +2677,7 @@ NOTIFY pgrst, 'reload schema';`}
                     </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                      Réglez cet article unique de mine VIP 2 à <strong>50 000 FCFA</strong> pour valider définitivement le VIP 2 et percevoir immédiatement votre prime spéciale de <strong>1 000 000 FCFA</strong> !
+                      Réglez cet article unique de mine VIP 2 à <strong>50 000 FCFA</strong> pour valider définitivement le VIP 2 et percevoir immédiatement votre prime spéciale de <strong>800 000 FCFA</strong> !
                     </p>
                   </div>
 
@@ -2687,7 +2687,7 @@ NOTIFY pgrst, 'reload schema';`}
                       className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                     >
                       <Crown className="w-5 h-5 text-slate-950" />
-                      <span>Payer 50 000 FCFA sur Solde &amp; Recevoir 1 000 000 FCFA</span>
+                      <span>Payer 50 000 FCFA sur Solde &amp; Recevoir 800 000 FCFA</span>
                     </button>
                   </div>
                 </div>
@@ -2705,10 +2705,10 @@ NOTIFY pgrst, 'reload schema';`}
                       ✓ VIP 2 Terminé avec Succès
                     </span>
                     <h3 className="text-2xl font-black text-white font-display">
-                      Récompense de 1 000 000 FCFA !
+                      Récompense de 800 000 FCFA !
                     </h3>
                     <p className="text-xs text-slate-300 leading-relaxed px-2">
-                      Félicitations ! Vous avez acquis votre article de mine VIP 2 (50 000 FCFA) et validé votre VIP 2. Une prime de <strong>1 000 000 FCFA</strong> a été créditée sur votre solde !
+                      Félicitations ! Vous avez acquis votre article de mine VIP 2 (50 000 FCFA) et validé votre VIP 2. Une prime de <strong>800 000 FCFA</strong> a été créditée sur votre solde !
                     </p>
                   </div>
 

@@ -67,7 +67,7 @@ export function RefineryHeroBanner({ onOpenPlans, onOpenTasks, onOpenVideoAd }: 
               </div>
               <div className="hidden xs:flex items-center gap-1.5">
                 <Flame className="w-4 h-4 text-orange-400" />
-                <span className="text-emerald-400 font-bold">+500k F à 1M F VIP</span>
+                <span className="text-emerald-400 font-bold">+480k F à 800k F VIP</span>
               </div>
             </div>
 

@@ -81,7 +81,7 @@ export const DEFAULT_PLANS: InvestmentPlan[] = [
     price: 30300,
     dailyProfit: 0,
     durationDays: 30,
-    totalProfit: 500000,
+    totalProfit: 480000,
     iconName: 'Crown',
     imageUrl: imgGoldIngotFilter,
     colorScheme: {
@@ -97,7 +97,7 @@ export const DEFAULT_PLANS: InvestmentPlan[] = [
     price: 50000,
     dailyProfit: 0,
     durationDays: 30,
-    totalProfit: 1000000,
+    totalProfit: 800000,
     iconName: 'Crown',
     imageUrl: imgHydraulicCrusher,
     colorScheme: {
