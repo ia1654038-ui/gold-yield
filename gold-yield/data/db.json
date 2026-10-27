@@ -1,0 +1,110 @@
+{
+  "users": [
+    {
+      "phone": "+2250102030405",
+      "name": "Investisseur Test",
+      "password": "password",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792761402655,
+      "created_at": "2026-10-23T13:16:42.655Z"
+    },
+    {
+      "phone": "+2250700000001",
+      "name": "Membre Test",
+      "password": "pass",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792761402735,
+      "created_at": "2026-10-23T13:16:42.735Z"
+    },
+    {
+      "phone": "+2250789123456",
+      "name": "Client VIP Gold",
+      "password": "mypassword123",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792761813385,
+      "created_at": "2026-10-23T13:23:33.385Z"
+    },
+    {
+      "phone": "+2250555667788",
+      "name": "Investisseur Test",
+      "password": "password2026",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792808053183,
+      "created_at": "2026-10-24T02:14:13.183Z"
+    },
+    {
+      "phone": "+2250101010101",
+      "name": "Test Direct Sync",
+      "password": "pass",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792808477150,
+      "created_at": "2026-10-24T02:21:17.150Z"
+    },
+    {
+      "phone": "+2250808080808",
+      "name": "Membre Test Supabase",
+      "password": "pass",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792808518652,
+      "created_at": "2026-10-24T02:21:58.652Z"
+    },
+    {
+      "phone": "+2250777889900",
+      "name": "Vérification Finale",
+      "password": "pass",
+      "invite_code": "GOLDYIELD",
+      "balance": 1000,
+      "claimable_sum": 0,
+      "last_tick_time": 1792808549460,
+      "created_at": "2026-10-24T02:22:29.460Z"
+    }
+  ],
+  "active_investments": [],
+  "transactions": [],
+  "investment_plans": [
+    {
+      "id": "vip1_machine",
+      "name": "Pack Machine VIP 1",
+      "price": 1800,
+      "daily_profit": 1000,
+      "duration_days": 30,
+      "total_profit": 30000
+    },
+    {
+      "id": "vip2_article1",
+      "name": "Broyeur Hydraulique Quartz 24K (VIP 2 • 1/3)",
+      "price": 25000,
+      "daily_profit": 0,
+      "duration_days": 30,
+      "total_profit": 0
+    },
+    {
+      "id": "vip2_article2",
+      "name": "Refroidisseur de Creusets d'Or (VIP 2 • 2/3)",
+      "price": 50000,
+      "daily_profit": 0,
+      "duration_days": 30,
+      "total_profit": 0
+    },
+    {
+      "id": "vip2_article3",
+      "name": "Moule & Filtre Spectrométrique (VIP 2 • 3/3)",
+      "price": 75000,
+      "daily_profit": 3000,
+      "duration_days": 30,
+      "total_profit": 200000
+    }
+  ]
+}
