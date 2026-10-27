@@ -600,8 +600,8 @@ export function DashboardScreen({
 
   const accumulatedVip2Gains = isVip2Finished ? 1000000 : 0;
   const totalVipGains = accumulatedVip1Gains + accumulatedVip2Gains;
-  // Capital to withdraw reflects the accumulated withdrawable funds (VIP gains and balance)
-  const withdrawableCapital = Math.max(balance, totalVipGains);
+  // Capital to withdraw reflects the accumulated VIP earnings (starts at 0 FCFA before any purchase)
+  const withdrawableCapital = totalVipGains;
 
   // VIP 1 requires user balance to be >= 3500 FCFA
   const isVip1Unlocked = balance >= 3500;
