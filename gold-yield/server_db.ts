@@ -200,18 +200,100 @@ export async function checkSupabaseHealth(force: boolean = false): Promise<boole
   return isSupabaseHealthy;
 }
 
+// Helpers for flexible phone normalization and candidate matching
+export function normalizePhoneDigits(phone: string): string {
+  return (phone || '').replace(/\D+/g, '');
+}
+
+export function getPhoneLookupCandidates(inputPhone: string): string[] {
+  const trimmed = (inputPhone || '').trim().replace(/[\s\-\(\)]/g, '');
+  const digits = normalizePhoneDigits(trimmed);
+  const candidates = new Set<string>();
+
+  if (trimmed) candidates.add(trimmed);
+  if (digits) candidates.add(digits);
+
+  if (trimmed.startsWith('+')) {
+    candidates.add(trimmed.substring(1));
+  } else if (trimmed) {
+    candidates.add(`+${trimmed}`);
+  }
+
+  // Handle Côte d'Ivoire and West Africa dial code variants (+225)
+  if (digits.startsWith('225')) {
+    const national = digits.substring(3);
+    candidates.add(national);
+    candidates.add(`0${national}`);
+    candidates.add(`+225${national}`);
+    candidates.add(`+2250${national}`);
+    if (national.startsWith('0')) {
+      const stripped = national.replace(/^0+/, '');
+      candidates.add(stripped);
+      candidates.add(`+225${stripped}`);
+    }
+  } else if (digits) {
+    candidates.add(`+225${digits}`);
+    candidates.add(`+2250${digits}`);
+    candidates.add(`225${digits}`);
+    candidates.add(`2250${digits}`);
+    if (digits.startsWith('0')) {
+      const stripped = digits.replace(/^0+/, '');
+      candidates.add(stripped);
+      candidates.add(`+225${stripped}`);
+    } else {
+      candidates.add(`0${digits}`);
+    }
+  }
+
+  // Last 8-10 digits suffix matching
+  if (digits.length >= 8) {
+    const last8 = digits.slice(-8);
+    candidates.add(last8);
+    candidates.add(`0${last8}`);
+    candidates.add(`+225${last8}`);
+    candidates.add(`+2250${last8}`);
+  }
+
+  return Array.from(candidates);
+}
+
+export function isSamePhone(p1: string, p2: string): boolean {
+  if (!p1 || !p2) return false;
+  const s1 = (p1 || '').trim().replace(/[\s\-\(\)]/g, '');
+  const s2 = (p2 || '').trim().replace(/[\s\-\(\)]/g, '');
+  if (s1 === s2) return true;
+
+  const d1 = normalizePhoneDigits(s1);
+  const d2 = normalizePhoneDigits(s2);
+  if (d1 === d2) return true;
+
+  // Match if last 8 digits are identical (core national mobile number)
+  if (d1.length >= 8 && d2.length >= 8) {
+    if (d1.slice(-8) === d2.slice(-8)) return true;
+  }
+  return false;
+}
+
 // Export DB operations with resilient automatic fallback
 
 export async function dbFindUser(phone: string): Promise<UserRecord | null> {
   const db = loadLocalDb();
+  const candidates = getPhoneLookupCandidates(phone);
 
-  // Try Supabase if initialized
+  // 1. Try Supabase if initialized
   if (supabaseClient) {
     try {
-      const { data, error } = await supabaseClient.from('users').select('*').eq('phone', phone).maybeSingle();
+      // Query by exact match or any candidate variation
+      const { data, error } = await supabaseClient
+        .from('users')
+        .select('*')
+        .in('phone', candidates)
+        .limit(1)
+        .maybeSingle();
+
       if (!error && data) {
         // Cache in local db
-        const existingIdx = db.users.findIndex(u => u.phone === phone);
+        const existingIdx = db.users.findIndex(u => isSamePhone(u.phone, data.phone));
         const record: UserRecord = {
           phone: data.phone,
           name: data.name,
@@ -234,8 +316,17 @@ export async function dbFindUser(phone: string): Promise<UserRecord | null> {
     }
   }
 
-  // Fallback to local DB
-  return db.users.find(u => u.phone === phone) || null;
+  // 2. Fallback to local DB: check candidates first
+  for (const cand of candidates) {
+    const found = db.users.find(u => u.phone === cand);
+    if (found) return found;
+  }
+
+  // 3. Fallback to local DB: check by flexible same-phone matching
+  const matched = db.users.find(u => isSamePhone(u.phone, phone));
+  if (matched) return matched;
+
+  return null;
 }
 
 export async function dbCreateUser(userData: {
@@ -280,10 +371,10 @@ export async function dbCreateUser(userData: {
     }
   }
 
-  // 2. Cache in local DB for fallback
-  const existingIdx = db.users.findIndex(u => u.phone === userData.phone);
+  // 2. Cache in local DB for fallback (check using isSamePhone to prevent duplicates)
+  const existingIdx = db.users.findIndex(u => isSamePhone(u.phone, userData.phone));
   if (existingIdx >= 0) {
-    db.users[existingIdx] = newUser;
+    db.users[existingIdx] = { ...db.users[existingIdx], ...newUser };
   } else {
     db.users.push(newUser);
   }
@@ -294,7 +385,7 @@ export async function dbCreateUser(userData: {
 
 export async function dbUpdateUser(phone: string, updates: Partial<UserRecord>): Promise<UserRecord | null> {
   const db = loadLocalDb();
-  const user = db.users.find(u => u.phone === phone);
+  const user = db.users.find(u => isSamePhone(u.phone, phone));
   if (!user) return null;
 
   Object.assign(user, updates);
@@ -310,7 +401,7 @@ export async function dbUpdateUser(phone: string, updates: Partial<UserRecord>):
       if (updates.is_vip2_finished !== undefined) updatePayload.is_vip2_finished = updates.is_vip2_finished;
 
       if (Object.keys(updatePayload).length > 0) {
-        await supabaseClient.from('users').update(updatePayload).eq('phone', phone);
+        await supabaseClient.from('users').update(updatePayload).eq('phone', user.phone);
       }
     } catch {
       // Ignored - local is master
@@ -322,10 +413,14 @@ export async function dbUpdateUser(phone: string, updates: Partial<UserRecord>):
 
 export async function dbGetUserInvestments(phone: string): Promise<ActiveInvestmentRecord[]> {
   const db = loadLocalDb();
+  const candidates = getPhoneLookupCandidates(phone);
 
   if (supabaseClient) {
     try {
-      const { data, error } = await supabaseClient.from('active_investments').select('*').eq('user_phone', phone);
+      const { data, error } = await supabaseClient
+        .from('active_investments')
+        .select('*')
+        .in('user_phone', candidates);
       if (!error && data && Array.isArray(data)) {
         return data.map(inv => ({
           id: inv.id,
@@ -346,7 +441,7 @@ export async function dbGetUserInvestments(phone: string): Promise<ActiveInvestm
     }
   }
 
-  return db.active_investments.filter(i => i.user_phone === phone);
+  return db.active_investments.filter(i => isSamePhone(i.user_phone, phone));
 }
 
 export async function dbAddInvestment(inv: ActiveInvestmentRecord): Promise<void> {
@@ -397,10 +492,15 @@ export async function dbUpdateInvestment(id: string, updates: Partial<ActiveInve
 
 export async function dbGetUserTransactions(phone: string): Promise<TransactionRecord[]> {
   const db = loadLocalDb();
+  const candidates = getPhoneLookupCandidates(phone);
 
   if (supabaseClient) {
     try {
-      const { data, error } = await supabaseClient.from('transactions').select('*').eq('user_phone', phone).order('created_at', { ascending: false });
+      const { data, error } = await supabaseClient
+        .from('transactions')
+        .select('*')
+        .in('user_phone', candidates)
+        .order('created_at', { ascending: false });
       if (!error && data && Array.isArray(data)) {
         return data.map(tx => ({
           id: tx.id,
@@ -419,7 +519,7 @@ export async function dbGetUserTransactions(phone: string): Promise<TransactionR
   }
 
   return db.transactions
-    .filter(t => t.user_phone === phone)
+    .filter(t => isSamePhone(t.user_phone, phone))
     .sort((a, b) => new Date(b.created_at || b.date || 0).getTime() - new Date(a.created_at || a.date || 0).getTime());
 }
 

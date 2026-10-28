@@ -358,6 +358,9 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    if (userPhone) {
+      localStorage.setItem('gy_last_phone', userPhone);
+    }
     setIsLoggedIn(false);
     setScreen('auth');
     localStorage.removeItem('gy_logged');

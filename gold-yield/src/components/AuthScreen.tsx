@@ -49,6 +49,26 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
         setInviteCode(ref);
         setIsSignUp(true);
       }
+
+      // Pre-fill last known phone if available
+      const savedPhone = localStorage.getItem('gy_current_phone') || localStorage.getItem('gy_last_phone');
+      if (savedPhone) {
+        let p = savedPhone.trim();
+        if (p.startsWith('+225')) {
+          setCountryDial('+225');
+          setPhone(p.replace('+225', ''));
+        } else if (p.startsWith('+')) {
+          const matchedCountry = COUNTRIES.find(c => p.startsWith(c.dial));
+          if (matchedCountry) {
+            setCountryDial(matchedCountry.dial);
+            setPhone(p.replace(matchedCountry.dial, ''));
+          } else {
+            setPhone(p);
+          }
+        } else {
+          setPhone(p);
+        }
+      }
     }
   }, []);
 
@@ -71,14 +91,14 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
     // Format phone number with country dial prefix
     let finalPhone = phone.trim();
     if (!finalPhone.startsWith('+')) {
-      let cleaned = finalPhone.replace(/\s+/g, '');
-      if (cleaned.startsWith('0')) {
-        cleaned = cleaned.substring(1);
-      }
+      const cleaned = finalPhone.replace(/\s+/g, '');
       finalPhone = `${countryDial}${cleaned}`;
     } else {
       finalPhone = finalPhone.replace(/\s+/g, '');
     }
+
+    const rawDigits = finalPhone.replace(/\D+/g, '');
+    const cleanPassword = password.trim();
 
     try {
       if (isSignUp) {
@@ -91,12 +111,32 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
         const res = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: finalPhone, name, password, inviteCode }),
+          body: JSON.stringify({ phone: finalPhone, name, password: cleanPassword, inviteCode }),
         });
 
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || 'Erreur lors de l\'inscription.');
+        }
+
+        // Persist account locally for reliable future login across restarts
+        if (typeof window !== 'undefined') {
+          const accountInfo = {
+            phone: data.user.phone || finalPhone,
+            name: data.user.name || name,
+            password: cleanPassword,
+            inviteCode: data.user.inviteCode || inviteCode || 'GOLDYIELD',
+            balance: data.user.balance !== undefined ? data.user.balance : 1000
+          };
+          localStorage.setItem('gy_last_phone', finalPhone);
+          localStorage.setItem('gy_last_user_account', JSON.stringify(accountInfo));
+          const accountsMap = JSON.parse(localStorage.getItem('gy_accounts_store') || '{}');
+          accountsMap[finalPhone] = accountInfo;
+          accountsMap[rawDigits] = accountInfo;
+          if (rawDigits.length >= 8) {
+            accountsMap[rawDigits.slice(-8)] = accountInfo;
+          }
+          localStorage.setItem('gy_accounts_store', JSON.stringify(accountsMap));
         }
 
         // Proceed with login success for new registration
@@ -105,12 +145,113 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: finalPhone, password }),
+          body: JSON.stringify({ phone: finalPhone, password: cleanPassword }),
         });
 
         const data = await res.json();
+
+        // RESILIENT RECOVERY: If the server database was reset or couldn't find the phone
         if (!res.ok) {
+          if (typeof window !== 'undefined') {
+            const accountsMap = JSON.parse(localStorage.getItem('gy_accounts_store') || '{}');
+            let localAccount = accountsMap[finalPhone] || accountsMap[rawDigits];
+            if (!localAccount && rawDigits.length >= 8) {
+              const suffix = rawDigits.slice(-8);
+              localAccount = accountsMap[suffix];
+              if (!localAccount) {
+                const keys = Object.keys(accountsMap);
+                const foundKey = keys.find(k => k.endsWith(suffix) || suffix.endsWith(k.slice(-8)));
+                if (foundKey) localAccount = accountsMap[foundKey];
+              }
+            }
+
+            if (!localAccount) {
+              const lastAccStr = localStorage.getItem('gy_last_user_account');
+              if (lastAccStr) {
+                try {
+                  const lastAcc = JSON.parse(lastAccStr);
+                  const lastDigits = (lastAcc.phone || '').replace(/\D+/g, '');
+                  if (lastDigits.endsWith(rawDigits.slice(-8)) || rawDigits.endsWith(lastDigits.slice(-8))) {
+                    localAccount = lastAcc;
+                  }
+                } catch {}
+              }
+            }
+
+            if (!localAccount) {
+              const savedName = localStorage.getItem(`gy_${finalPhone}_name`) || 
+                                localStorage.getItem(`gy_${rawDigits}_name`) ||
+                                (rawDigits.length >= 8 ? localStorage.getItem(`gy_+225${rawDigits.slice(-8)}_name`) : null) ||
+                                (rawDigits.length >= 8 ? localStorage.getItem(`gy_+2250${rawDigits.slice(-8)}_name`) : null);
+              if (savedName) {
+                localAccount = {
+                  phone: finalPhone,
+                  name: savedName,
+                  password: cleanPassword,
+                  inviteCode: localStorage.getItem(`gy_${finalPhone}_invite`) || 'GOLDYIELD',
+                  balance: parseInt(localStorage.getItem(`gy_${finalPhone}_balance`) || '1000')
+                };
+              }
+            }
+
+            // If account was found on this device and password matches (or was saved)
+            if (localAccount && (localAccount.password === cleanPassword || !localAccount.password)) {
+              try {
+                // Auto-register / re-sync with server to restore database entry
+                const regRes = await fetch('/api/auth/register', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    phone: localAccount.phone || finalPhone,
+                    name: localAccount.name || 'Investisseur Gold',
+                    password: cleanPassword,
+                    inviteCode: localAccount.inviteCode || 'GOLDYIELD',
+                    balance: localAccount.balance || 1000
+                  })
+                });
+                const regData = await regRes.json();
+                if (regRes.ok && regData.user) {
+                  localStorage.setItem('gy_last_phone', finalPhone);
+                  onLoginSuccess(regData.user, [], [], false, false);
+                  return;
+                }
+              } catch {
+                // Fallback local recovery
+                localStorage.setItem('gy_last_phone', finalPhone);
+                onLoginSuccess({
+                  phone: localAccount.phone || finalPhone,
+                  name: localAccount.name || 'Investisseur Gold',
+                  inviteCode: localAccount.inviteCode || 'GOLDYIELD',
+                  balance: localAccount.balance || 1000,
+                  claimableSum: 0,
+                  lastTickTime: Date.now()
+                }, [], [], false, false);
+                return;
+              }
+            }
+          }
+
           throw new Error(data.error || 'Erreur de connexion.');
+        }
+
+        // On successful login, save credentials locally for guaranteed future resilience
+        if (typeof window !== 'undefined') {
+          const accountInfo = {
+            phone: data.user.phone || finalPhone,
+            name: data.user.name,
+            password: cleanPassword,
+            inviteCode: data.user.inviteCode || 'GOLDYIELD',
+            balance: data.user.balance !== undefined ? data.user.balance : 1000
+          };
+          localStorage.setItem('gy_last_phone', finalPhone);
+          localStorage.setItem('gy_last_user_account', JSON.stringify(accountInfo));
+          const accountsMap = JSON.parse(localStorage.getItem('gy_accounts_store') || '{}');
+          accountsMap[finalPhone] = accountInfo;
+          accountsMap[rawDigits] = accountInfo;
+          if (rawDigits.length >= 8) {
+            accountsMap[rawDigits.slice(-8)] = accountInfo;
+          }
+          localStorage.setItem('gy_accounts_store', JSON.stringify(accountsMap));
         }
 
         // Proceed with login success for existing user login

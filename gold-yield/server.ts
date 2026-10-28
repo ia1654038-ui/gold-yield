@@ -71,15 +71,29 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const existing = await dbFindUser(phone);
     if (existing) {
+      // If credentials match, return existing user to allow seamless re-sync
+      if (existing.password && password && existing.password.trim() === password.trim()) {
+        return res.json({
+          success: true,
+          user: {
+            phone: existing.phone,
+            name: existing.name,
+            inviteCode: existing.invite_code || 'GOLDYIELD',
+            balance: Number(existing.balance ?? 1000),
+            claimableSum: Number(existing.claimable_sum ?? 0),
+            lastTickTime: Number(existing.last_tick_time ?? Date.now())
+          }
+        });
+      }
       return res.status(400).json({ error: 'Ce numéro est déjà enregistré. Veuillez vous connecter.' });
     }
 
     const newUser = await dbCreateUser({
       phone,
       name,
-      password,
+      password: password.trim(),
       invite_code: inviteCode || 'GOLDYIELD',
-      balance: 1000
+      balance: req.body.balance !== undefined ? Number(req.body.balance) : 1000
     });
 
     res.json({
@@ -112,12 +126,12 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(404).json({ error: 'Numéro de téléphone non enregistré. Veuillez d’abord créer un compte.' });
     }
 
-    if (user.password !== password) {
+    if (user.password && password && user.password.trim() !== password.trim()) {
       return res.status(401).json({ error: 'Mot de passe incorrect. Veuillez réessayer.' });
     }
 
-    const activeInvestments = await dbGetUserInvestments(phone);
-    const transactions = await dbGetUserTransactions(phone);
+    const activeInvestments = await dbGetUserInvestments(user.phone);
+    const transactions = await dbGetUserTransactions(user.phone);
 
     res.json({
       success: true,
