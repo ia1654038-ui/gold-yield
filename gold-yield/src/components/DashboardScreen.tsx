@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Wallet,
+  Coins,
   ArrowUpRight,
   ArrowDownLeft,
   TrendingUp,
@@ -1012,33 +1013,39 @@ export function DashboardScreen({
                 </div>
               </div>
 
-              {/* Quick Stats inside the main wallet */}
-              <div className="grid grid-cols-2 gap-3 pt-4 mt-5 border-t border-white/[0.08] relative z-10">
-                <div className="bg-slate-950/50 border border-white/[0.04] rounded-2xl p-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[10px] text-amber-400 uppercase font-bold tracking-wider">Capital à retirer</p>
-                    <span className="text-[9px] font-mono text-slate-400">VIP 1 & 2</span>
+              {/* Capital à Retirer (Design identique au Portefeuille Principal) */}
+              <div className="pt-4 mt-5 border-t border-white/[0.08] relative z-10 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-300 flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-mono">
+                      <Coins className="w-3 h-3 text-amber-400" />
+                      Capital à Retirer
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 bg-slate-950/60 border border-white/[0.06] px-2 py-0.5 rounded-full">
+                      VIP 1 & 2
+                    </span>
                   </div>
-                  <p className="text-base font-black font-mono text-emerald-400 mt-0.5">
-                    {withdrawableCapital.toLocaleString('fr-FR')} FCFA
-                  </p>
-                  <p className="text-[9px] text-slate-400 font-mono mt-0.5 truncate">
-                    {isVip1Finished ? (
-                      <span className="text-emerald-400 font-bold">✓ VIP 1 débloqué (480 000 F)</span>
-                    ) : accumulatedVip1Gains > 0 ? (
-                      <span className="text-amber-300 font-semibold">Cumul VIP 1 : {accumulatedVip1Gains.toLocaleString('fr-FR')} / 480 000 F</span>
-                    ) : (
-                      <span>Cumul VIP 1 : 0 / 480 000 F</span>
-                    )}
-                  </p>
+                  <span className="text-[10px] font-mono text-amber-300 font-semibold">
+                    {isVip1Finished ? '✓ VIP 1 Terminé' : `${accumulatedVip1Gains.toLocaleString('fr-FR')} / 480 000 F`}
+                  </span>
                 </div>
-                <div className="bg-slate-950/50 border border-white/[0.04] rounded-2xl p-3">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Rendement Journalier</p>
-                  <p className="text-base font-black font-mono text-emerald-400 flex items-center gap-1 mt-0.5">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    +{totalDailyRevenue.toLocaleString('fr-FR')} FCFA
-                  </p>
-                </div>
+
+                <h3 className="text-3xl md:text-5xl font-black text-white font-mono tracking-tight leading-none pt-1">
+                  <span>
+                    {withdrawableCapital.toLocaleString('fr-FR')}
+                  </span>
+                  <span className="text-amber-400 text-xl md:text-2xl font-bold ml-2">FCFA</span>
+                </h3>
+
+                <p className="text-[10px] text-slate-400 font-mono pt-0.5">
+                  {isVip1Finished ? (
+                    <span className="text-emerald-400 font-bold">✓ Gain VIP 1 débloqué (480 000 FCFA) • Prêt pour le retrait</span>
+                  ) : accumulatedVip1Gains > 0 ? (
+                    <span className="text-amber-300 font-semibold">Progression VIP 1 : {accumulatedVip1Gains.toLocaleString('fr-FR')} / 480 000 FCFA débloqués</span>
+                  ) : (
+                    <span>Progression VIP 1 : 0 / 480 000 FCFA (se débloque au fil des achats)</span>
+                  )}
+                </p>
               </div>
             </motion.div>
           </div>
