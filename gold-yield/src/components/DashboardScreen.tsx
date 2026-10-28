@@ -227,20 +227,37 @@ export function DashboardScreen({
 
   // Keep VIP completion state in sync with localStorage and user phone
   React.useEffect(() => {
-    if (userPhone) {
-      const saved1 = localStorage.getItem(`gy_${userPhone}_vip1_finished`);
-      if (saved1 === 'true') setIsVip1Finished(true);
+    if (typeof window !== 'undefined') {
+      const activePhone = userPhone || localStorage.getItem('gy_current_phone');
+      if (activePhone) {
+        const saved1 = localStorage.getItem(`gy_${activePhone}_vip1_finished`);
+        if (saved1 === 'true') setIsVip1Finished(true);
 
-      const saved2 = localStorage.getItem(`gy_${userPhone}_vip2_finished`);
-      if (saved2 === 'true') setIsVip2Finished(true);
+        const saved2 = localStorage.getItem(`gy_${activePhone}_vip2_finished`);
+        if (saved2 === 'true') setIsVip2Finished(true);
+
+        const savedStep = localStorage.getItem(`gy_${activePhone}_vip1_step`);
+        if (savedStep === 'article2' || savedStep === 'article3' || savedStep === 'article4' || savedStep === 'article5') {
+          setVip1SavedStep(savedStep as any);
+        }
+      }
+      const genericStep = localStorage.getItem('gy_vip1_step');
+      if (genericStep === 'article2' || genericStep === 'article3' || genericStep === 'article4' || genericStep === 'article5') {
+        setVip1SavedStep(genericStep as any);
+      }
     }
   }, [userPhone]);
 
   // Saved VIP 1 Step ('article1' | 'article2' | 'article3' | 'article4' | 'article5')
   const [vip1SavedStep, setVip1SavedStep] = useState<'article1' | 'article2' | 'article3' | 'article4' | 'article5'>(() => {
-    if (typeof window !== 'undefined' && userPhone) {
-      const saved = localStorage.getItem(`gy_${userPhone}_vip1_step`);
-      if (saved === 'article2' || saved === 'article3' || saved === 'article4' || saved === 'article5') return saved;
+    if (typeof window !== 'undefined') {
+      const activePhone = userPhone || localStorage.getItem('gy_current_phone');
+      if (activePhone) {
+        const saved = localStorage.getItem(`gy_${activePhone}_vip1_step`);
+        if (saved === 'article2' || saved === 'article3' || saved === 'article4' || saved === 'article5') return saved;
+      }
+      const generic = localStorage.getItem('gy_vip1_step');
+      if (generic === 'article2' || generic === 'article3' || generic === 'article4' || generic === 'article5') return generic;
     }
     return 'article1';
   });
@@ -310,11 +327,17 @@ export function DashboardScreen({
     setIsVip2Finished(false);
     setVip1SavedStep('article1');
     setVip2SavedStep('article1');
-    if (typeof window !== 'undefined' && userPhone) {
-      localStorage.removeItem(`gy_${userPhone}_vip1_finished`);
-      localStorage.removeItem(`gy_${userPhone}_vip2_finished`);
-      localStorage.removeItem(`gy_${userPhone}_vip1_step`);
-      localStorage.removeItem(`gy_${userPhone}_vip2_step`);
+    if (typeof window !== 'undefined') {
+      if (userPhone) {
+        localStorage.removeItem(`gy_${userPhone}_vip1_finished`);
+        localStorage.removeItem(`gy_${userPhone}_vip2_finished`);
+        localStorage.removeItem(`gy_${userPhone}_vip1_step`);
+        localStorage.removeItem(`gy_${userPhone}_vip2_step`);
+      }
+      localStorage.removeItem('gy_vip1_finished');
+      localStorage.removeItem('gy_vip2_finished');
+      localStorage.removeItem('gy_vip1_step');
+      localStorage.removeItem('gy_vip2_step');
     }
   };
 
@@ -376,15 +399,6 @@ export function DashboardScreen({
       if (showToast) showToast("Le niveau VIP 1 est déjà terminé, validé et bloqué !", "info");
       return;
     }
-    if (balance < 1820) {
-      setVipLevelModal(null);
-      setInsufficientBalanceModal({
-        requiredPrice: 1820,
-        missingAmount: 1820 - balance,
-        articleName: "Accès Article 1/5 VIP 1 (Solde minimum requis : 1 820 FCFA)"
-      });
-      return;
-    }
     setVipLevelModal(null);
     if (vip1SavedStep === 'article5') {
       setVip1CommanderStep('article5');
@@ -417,7 +431,7 @@ export function DashboardScreen({
     setVip2CommanderStep('loading');
   };
 
-  // VIP 1 Article 1: 1 820 FCFA -> Gain +96 000 FCFA
+  // VIP 1 Article 1: 1 820 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer
   const handlePayArticle1 = () => {
     if (balance < 1820) {
       setInsufficientBalanceModal({
@@ -428,19 +442,18 @@ export function DashboardScreen({
       return;
     }
     if (onCompleteTask) {
+      // Débit strict du portefeuille principal
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #1 (1 820F)", -1820);
-      setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 1/5 validée)", 96000);
-      }, 200);
     }
     setVip1SavedStep('article2');
     if (userPhone) {
       localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article2');
     }
+    localStorage.setItem('gy_vip1_step', 'article2');
     setVip1CommanderStep('article2');
   };
 
-  // VIP 1 Article 2: 2 100 FCFA -> Gain +96 000 FCFA
+  // VIP 1 Article 2: 2 100 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer (cumul 192k)
   const handlePayArticle2 = () => {
     if (balance < 2100) {
       setInsufficientBalanceModal({
@@ -451,19 +464,18 @@ export function DashboardScreen({
       return;
     }
     if (onCompleteTask) {
+      // Débit strict du portefeuille principal
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #2 (2 100F)", -2100);
-      setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 2/5 validée)", 96000);
-      }, 200);
     }
     setVip1SavedStep('article3');
     if (userPhone) {
       localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article3');
     }
+    localStorage.setItem('gy_vip1_step', 'article3');
     setVip1CommanderStep('article3');
   };
 
-  // VIP 1 Article 3: 6 300 FCFA -> Gain +96 000 FCFA
+  // VIP 1 Article 3: 6 300 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer (cumul 288k)
   const handlePayArticle3 = () => {
     if (balance < 6300) {
       setInsufficientBalanceModal({
@@ -474,19 +486,18 @@ export function DashboardScreen({
       return;
     }
     if (onCompleteTask) {
+      // Débit strict du portefeuille principal
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #3 (6 300F)", -6300);
-      setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 3/5 validée)", 96000);
-      }, 200);
     }
     setVip1SavedStep('article4');
     if (userPhone) {
       localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article4');
     }
+    localStorage.setItem('gy_vip1_step', 'article4');
     setVip1CommanderStep('article4');
   };
 
-  // VIP 1 Article 4: 15 500 FCFA -> Gain +96 000 FCFA
+  // VIP 1 Article 4: 15 500 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer (cumul 384k)
   const handlePayArticle4 = () => {
     if (balance < 15500) {
       setInsufficientBalanceModal({
@@ -497,19 +508,18 @@ export function DashboardScreen({
       return;
     }
     if (onCompleteTask) {
+      // Débit strict du portefeuille principal
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #4 (15 500F)", -15500);
-      setTimeout(() => {
-        onCompleteTask("Gain VIP 1 (Étape 4/5 validée)", 96000);
-      }, 200);
     }
     setVip1SavedStep('article5');
     if (userPhone) {
       localStorage.setItem(`gy_${userPhone}_vip1_step`, 'article5');
     }
+    localStorage.setItem('gy_vip1_step', 'article5');
     setVip1CommanderStep('article5');
   };
 
-  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (+96 000 FCFA = 480 000 FCFA Total!)
+  // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (Total 480 000 FCFA débloqué dans Capital à retirer)
   const handlePayArticle5 = () => {
     if (balance < 30300) {
       setInsufficientBalanceModal({
@@ -520,31 +530,29 @@ export function DashboardScreen({
       return;
     }
     if (onCompleteTask) {
+      // Débit strict du portefeuille principal
       onCompleteTask("Achat Article de Mine VIP 1 - Lot #5 (30 300F)", -30300);
     }
-    setTimeout(() => {
-      if (onCompleteTask) {
-        onCompleteTask("Gain Final VIP 1 (Étape 5/5 validée)", 96000);
-      }
-      setIsVip1Finished(true);
-      setVip1SavedStep('article1');
-      if (userPhone) {
-        localStorage.setItem(`gy_${userPhone}_vip1_finished`, 'true');
-        localStorage.removeItem(`gy_${userPhone}_vip1_step`);
-        fetch('/api/user/sync-tick', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phone: userPhone,
-            isVip1Finished: true
-          }),
-        }).catch(() => {});
-      }
-      setVip1CommanderStep('success');
-    }, 250);
+    setIsVip1Finished(true);
+    setVip1SavedStep('article1');
+    if (userPhone) {
+      localStorage.setItem(`gy_${userPhone}_vip1_finished`, 'true');
+      localStorage.removeItem(`gy_${userPhone}_vip1_step`);
+      fetch('/api/user/sync-tick', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: userPhone,
+          isVip1Finished: true
+        }),
+      }).catch(() => {});
+    }
+    localStorage.setItem('gy_vip1_finished', 'true');
+    localStorage.removeItem('gy_vip1_step');
+    setVip1CommanderStep('success');
   };
 
-  // VIP 2 Single Article 1/1: 50 000 FCFA -> Finish VIP 2 (+800 000 FCFA)
+  // VIP 2 Single Article 1/1: 50 000 FCFA -> Finish VIP 2 (800 000 FCFA débloqué dans Capital à retirer)
   const handlePayVip2Article1 = () => {
     if (balance < 50000) {
       setInsufficientBalanceModal({
@@ -555,28 +563,25 @@ export function DashboardScreen({
       return;
     }
     if (onCompleteTask) {
+      // Débit strict du portefeuille principal
       onCompleteTask("Achat Article de Mine VIP 2 (50 000F)", -50000);
     }
-    setTimeout(() => {
-      if (onCompleteTask) {
-        onCompleteTask("Récompense Validation VIP 2", 800000);
-      }
-      setIsVip2Finished(true);
-      setVip2SavedStep('article1');
-      if (userPhone) {
-        localStorage.setItem(`gy_${userPhone}_vip2_finished`, 'true');
-        localStorage.removeItem(`gy_${userPhone}_vip2_step`);
-        fetch('/api/user/sync-tick', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phone: userPhone,
-            isVip2Finished: true
-          }),
-        }).catch(() => {});
-      }
-      setVip2CommanderStep('success');
-    }, 250);
+    setIsVip2Finished(true);
+    setVip2SavedStep('article1');
+    if (userPhone) {
+      localStorage.setItem(`gy_${userPhone}_vip2_finished`, 'true');
+      localStorage.removeItem(`gy_${userPhone}_vip2_step`);
+      fetch('/api/user/sync-tick', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: userPhone,
+          isVip2Finished: true
+        }),
+      }).catch(() => {});
+    }
+    localStorage.setItem('gy_vip2_finished', 'true');
+    setVip2CommanderStep('success');
   };
 
   // Calculate total user investment capital & balance status
@@ -603,8 +608,9 @@ export function DashboardScreen({
   // Capital to withdraw reflects the accumulated VIP earnings (starts at 0 FCFA before any purchase)
   const withdrawableCapital = totalVipGains;
 
-  // VIP 1 requires user balance to be >= 3500 FCFA
-  const isVip1Unlocked = balance >= 3500;
+  // VIP 1 is unlocked if user balance >= 3500 FCFA OR if user has already started (in progress)
+  const isVip1InProgress = vip1SavedStep !== 'article1';
+  const isVip1Unlocked = balance >= 3500 || isVip1InProgress;
 
   // VIP 2 requires user balance to be >= 10,000 FCFA
   const isVip2Unlocked = balance >= 10000;
@@ -716,21 +722,35 @@ export function DashboardScreen({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
         {/* VIP 1 TICKET - ACCESSIBLE DÈS 3 500 FCFA */}
         <div
-          onClick={() => setVipLevelModal({
-            level: 'VIP1',
-            price: '3 500.00 FCFA',
-            title: isVip1Finished
-              ? 'Niveau Membre VIP 1 — Terminé & Validé !'
-              : isVip1Unlocked ? 'Niveau Membre VIP 1 — Accès Débloqué !' : 'Niveau Membre VIP 1',
-            subtitle: isVip1Finished
-              ? 'Félicitations ! Vous avez complété les articles du VIP 1 et empoché 480 000 FCFA !'
-              : isVip1Unlocked
-              ? `Votre solde est de ${balance.toLocaleString('fr-FR')} FCFA. Cliquez sur Commander pour acheter les articles de mine !`
-              : 'Un solde d\'au moins 3 500 FCFA sur votre compte débloque l\'accès au VIP 1.',
-            isVip1: true,
-            isVip2: false,
-            isVip3: false
-          })}
+          onClick={() => {
+            if (isVip1Finished) {
+              setVipLevelModal({
+                level: 'VIP1',
+                price: '3 500.00 FCFA',
+                title: 'Niveau Membre VIP 1 — Terminé & Validé !',
+                subtitle: 'Félicitations ! Vous avez complété les articles du VIP 1 et empoché 480 000 FCFA !',
+                isVip1: true,
+                isVip2: false,
+                isVip3: false
+              });
+              return;
+            }
+            if (isVip1InProgress) {
+              handleStartVip1Commander();
+              return;
+            }
+            setVipLevelModal({
+              level: 'VIP1',
+              price: '3 500.00 FCFA',
+              title: isVip1Unlocked ? 'Niveau Membre VIP 1 — Accès Débloqué !' : 'Niveau Membre VIP 1',
+              subtitle: isVip1Unlocked
+                ? `Votre solde est de ${balance.toLocaleString('fr-FR')} FCFA. Cliquez sur Commander pour acheter les articles de mine !`
+                : 'Un solde d\'au moins 3 500 FCFA sur votre compte débloque l\'accès au VIP 1.',
+              isVip1: true,
+              isVip2: false,
+              isVip3: false
+            });
+          }}
           className="relative bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/40 rounded-2xl p-4.5 shadow-xl overflow-hidden flex justify-between items-center cursor-pointer hover:border-amber-400/50 hover:scale-[1.01] active:scale-[0.99] transition-all border border-amber-500/30 group"
         >
           <div className="absolute -top-10 -right-10 w-28 h-28 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
@@ -764,9 +784,22 @@ export function DashboardScreen({
             ) : (
               <div className="flex flex-col gap-1.5 items-start pt-0.5">
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md inline-block ${
-                  isVip1Unlocked ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-950/80 text-amber-400 border border-slate-800'
+                  isVip1InProgress
+                    ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold'
+                    : isVip1Unlocked
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                    : 'bg-slate-950/80 text-amber-400 border border-slate-800'
                 }`}>
-                  {isVip1Unlocked ? 'Accès Débloqué (≥ 3 500F)' : 'Solde Requis : 3 500F'}
+                  {isVip1InProgress
+                    ? `En cours : ${
+                        vip1SavedStep === 'article5' ? 'Article 5/5 (30 300F)' :
+                        vip1SavedStep === 'article4' ? 'Article 4/5 (15 500F)' :
+                        vip1SavedStep === 'article3' ? 'Article 3/5 (6 300F)' :
+                        'Article 2/5 (2 100F)'
+                      }`
+                    : isVip1Unlocked
+                    ? 'Accès Débloqué (≥ 3 500F)'
+                    : 'Solde Requis : 3 500F'}
                 </span>
 
                 {isVip1Unlocked ? (
@@ -780,14 +813,14 @@ export function DashboardScreen({
                     <ShoppingCart className="w-3.5 h-3.5" />
                     <span>
                       {vip1SavedStep === 'article5'
-                        ? 'Reprendre (5/5)'
+                        ? 'Reprendre (5/5 • 30 300F)'
                         : vip1SavedStep === 'article4'
-                        ? 'Reprendre (4/5)'
+                        ? 'Reprendre (4/5 • 15 500F)'
                         : vip1SavedStep === 'article3'
-                        ? 'Reprendre (3/5)'
+                        ? 'Reprendre (3/5 • 6 300F)'
                         : vip1SavedStep === 'article2'
-                        ? 'Reprendre (2/5)'
-                        : 'Commander (1/5)'}
+                        ? 'Reprendre (2/5 • 2 100F)'
+                        : 'Commander (1/5 • 1 820F)'}
                     </span>
                   </button>
                 ) : (
@@ -2374,7 +2407,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 1 820 FCFA & Recevoir +96 000 FCFA (Étape 1/5)</span>
+                    <span>Payer 1 820 FCFA (Étape 1/5 • Gain +96 000 F débloqué)</span>
                   </button>
                 </div>
               )}
@@ -2418,7 +2451,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 2 100 FCFA & Recevoir +96 000 FCFA (Étape 2/5)</span>
+                    <span>Payer 2 100 FCFA (Étape 2/5 • Gain +96 000 F débloqué)</span>
                   </button>
                 </div>
               )}
@@ -2462,7 +2495,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 6 300 FCFA & Recevoir +96 000 FCFA (Étape 3/5)</span>
+                    <span>Payer 6 300 FCFA (Étape 3/5 • Gain +96 000 F débloqué)</span>
                   </button>
                 </div>
               )}
@@ -2506,7 +2539,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 15 500 FCFA & Recevoir +96 000 FCFA (Étape 4/5)</span>
+                    <span>Payer 15 500 FCFA (Étape 4/5 • Gain +96 000 F débloqué)</span>
                   </button>
                 </div>
               )}
@@ -2550,7 +2583,7 @@ NOTIFY pgrst, 'reload schema';`}
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Crown className="w-5 h-5 text-slate-950" />
-                    <span>Payer 30 300 FCFA & Finaliser les 480 000 FCFA</span>
+                    <span>Payer 30 300 FCFA (Étape 5/5 • Gain Final 480 000 F débloqué)</span>
                   </button>
                 </div>
               )}
@@ -2687,7 +2720,7 @@ NOTIFY pgrst, 'reload schema';`}
                       className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                     >
                       <Crown className="w-5 h-5 text-slate-950" />
-                      <span>Payer 50 000 FCFA sur Solde &amp; Recevoir 800 000 FCFA</span>
+                      <span>Payer 50 000 FCFA sur Solde (Gain 800 000 F débloqué)</span>
                     </button>
                   </div>
                 </div>
