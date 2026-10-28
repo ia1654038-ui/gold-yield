@@ -1682,25 +1682,74 @@ export function DashboardScreen({
             </div>
           </div>
 
-          {/* Quick Balance Summary & Actions */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+          {/* Quick Balance Summary & Actions (Portefeuille Principal & Capital à Retirer) */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-5">
+            {/* 1. Solde Disponible (Portefeuille Principal) */}
             <div className="flex justify-between items-center">
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400">Solde Disponible</span>
-                <p className="text-2xl font-black text-amber-400 font-mono">{balance.toLocaleString('fr-FR')} FCFA</p>
+                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                  Solde Disponible (Portefeuille)
+                </span>
+                <p className="text-2xl font-black text-white font-mono mt-0.5">
+                  <span>{balance.toLocaleString('fr-FR')}</span>
+                  <span className="text-amber-400 text-lg font-bold ml-1.5">FCFA</span>
+                </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 shrink-0">
                 <button
                   onClick={onOpenRecharge}
-                  className="px-3.5 py-2 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:bg-amber-400 transition-all cursor-pointer"
+                  className="px-3.5 py-2 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl hover:bg-amber-400 transition-all cursor-pointer shadow-md shadow-amber-500/10 active:scale-95"
                 >
                   Dépôt
                 </button>
                 <button
                   onClick={onOpenWithdraw}
-                  className="px-3.5 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition-all border border-slate-700 cursor-pointer"
+                  className="px-3.5 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition-all border border-slate-700 cursor-pointer active:scale-95"
                 >
                   Retrait
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Capital à Retirer (VIP 1 & 2) */}
+            <div className="border-t border-slate-800/80 pt-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-300 flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-mono">
+                    <Coins className="w-3 h-3 text-amber-400" />
+                    Capital à Retirer
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400 bg-slate-950 border border-slate-800 px-2 py-0.5 rounded-full">
+                    VIP 1 & 2
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-amber-300 font-semibold">
+                  {isVip1Finished ? '✓ 480 000 F' : `${accumulatedVip1Gains.toLocaleString('fr-FR')} / 480 000 F`}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-2xl font-black text-white font-mono">
+                    <span>{withdrawableCapital.toLocaleString('fr-FR')}</span>
+                    <span className="text-amber-400 text-lg font-bold ml-1.5">FCFA</span>
+                  </p>
+                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                    {isVip1Finished ? (
+                      <span className="text-emerald-400 font-bold">✓ Gain VIP 1 débloqué (480 000 FCFA) • Prêt pour le retrait</span>
+                    ) : accumulatedVip1Gains > 0 ? (
+                      <span className="text-amber-300 font-semibold">Cumul VIP 1 : {accumulatedVip1Gains.toLocaleString('fr-FR')} / 480 000 FCFA</span>
+                    ) : (
+                      <span>Cumul VIP 1 : 0 / 480 000 FCFA</span>
+                    )}
+                  </p>
+                </div>
+
+                <button
+                  onClick={onOpenWithdraw}
+                  className="px-3.5 py-2 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md shadow-emerald-500/15 cursor-pointer active:scale-95 shrink-0"
+                >
+                  Retirer
                 </button>
               </div>
             </div>
