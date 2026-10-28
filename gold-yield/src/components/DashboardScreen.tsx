@@ -44,7 +44,6 @@ import {
   Download,
   Share,
   Palette,
-  Database,
   UserCheck,
   Headphones
 } from 'lucide-react';
@@ -164,7 +163,6 @@ export function DashboardScreen({
   currentTheme = 'royal'
 }: DashboardScreenProps) {
   const [copied, setCopied] = useState(false);
-  const [copiedCmd, setCopiedCmd] = useState(false);
 
   // Daily Tasks local completion state
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>(() => {
@@ -266,60 +264,6 @@ export function DashboardScreen({
   const [vip2SavedStep, setVip2SavedStep] = useState<'article1'>(() => {
     return 'article1';
   });
-
-  // Supabase Database Connection Modal & Status
-  const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState(false);
-  const [supabaseUrlInput, setSupabaseUrlInput] = useState('');
-  const [supabaseKeyInput, setSupabaseKeyInput] = useState('');
-  const [supabaseLoading, setSupabaseLoading] = useState(false);
-  const [supabaseStatus, setSupabaseStatus] = useState<{ connected: boolean; engine: string } | null>(null);
-
-  React.useEffect(() => {
-    fetch('/api/admin/supabase-status')
-      .then(res => res.json())
-      .then(data => setSupabaseStatus(data))
-      .catch(() => setSupabaseStatus({ connected: false, engine: 'Local Resilient DB' }));
-  }, []);
-
-  const handleConnectSupabase = async () => {
-    if (!supabaseUrlInput.trim() || !supabaseKeyInput.trim()) {
-      if (showToast) showToast('Veuillez renseigner l\'URL et la Clé Supabase', 'error');
-      return;
-    }
-    setSupabaseLoading(true);
-    try {
-      const res = await fetch('/api/admin/set-supabase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: supabaseUrlInput, key: supabaseKeyInput })
-      });
-      const data = await res.json();
-      if (data.connected) {
-        setSupabaseStatus({ connected: true, engine: 'Supabase Cloud (Active)' });
-        if (showToast) showToast('Base de données Supabase connectée avec succès !', 'success');
-        setIsSupabaseModalOpen(false);
-      } else {
-        setSupabaseStatus({ connected: false, engine: 'Local Resilient DB' });
-        if (showToast) showToast(data.message || 'Échec de la connexion Supabase', 'error');
-      }
-    } catch {
-      if (showToast) showToast('Erreur de connexion au serveur', 'error');
-    } finally {
-      setSupabaseLoading(false);
-    }
-  };
-
-  const handleDisconnectSupabase = async () => {
-    try {
-      await fetch('/api/admin/disconnect-supabase', { method: 'POST' });
-      setSupabaseStatus({ connected: false, engine: 'Local Resilient DB' });
-      setSupabaseUrlInput('');
-      setSupabaseKeyInput('');
-      if (showToast) showToast('Base de données Supabase déconnectée.', 'success');
-    } catch {
-      if (showToast) showToast('Erreur lors de la déconnexion', 'error');
-    }
-  };
 
   // Reset VIP completion & step handler
   const handleResetVipStatus = () => {
@@ -684,12 +628,6 @@ export function DashboardScreen({
     ? `${getBaseUrl()}/?ref=${userPhone}` 
     : `${getBaseUrl()}/?ref=GOLDYIELD`;
 
-  const handleCopyCmd = () => {
-    navigator.clipboard.writeText("ALTER TABLE users ADD COLUMN IF NOT EXISTS claimable_sum NUMERIC DEFAULT 0;\nALTER TABLE users ADD COLUMN IF NOT EXISTS last_tick_time BIGINT DEFAULT 0;\nNOTIFY pgrst, 'reload schema';");
-    setCopiedCmd(true);
-    setTimeout(() => setCopiedCmd(false), 3000);
-  };
-
   const handleCopyLink = () => {
     const textToCopy = `📢 *OPPORTUNITÉ D'EMPLOI EN LIGNE — GOLD YIELD* 💼\n\n` +
                        `Rejoignez notre équipe et travaillez directement depuis votre téléphone pour percevoir un salaire quotidien compris entre *35 000 FCFA et 65 000 FCFA par jour* !\n\n` +
@@ -1014,44 +952,6 @@ export function DashboardScreen({
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 md:px-8 space-y-8 pb-28 font-sans">
       
-      {/* DB Schema Cache Alert / Action notice */}
-      {schemaCacheStale && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 rounded-3xl p-6 space-y-4"
-        >
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-amber-500/20 rounded-xl text-amber-400">
-              <AlertCircle className="w-5 h-5" />
-            </div>
-            <div className="space-y-1">
-              <h4 className="text-sm font-bold text-amber-400">
-                Action Recommandée : Cache de schéma Supabase obsolète détecté !
-              </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Votre base de données Supabase ne reconnaît pas encore les colonnes de mining (<code className="text-amber-300 font-mono">claimable_sum</code>, <code className="text-amber-300 font-mono">last_tick_time</code>). 
-                L'application utilise un système de secours local sécurisé, mais pour activer la sauvegarde de votre progression dans le cloud, veuillez exécuter ces commandes de mise à jour.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-950/80 p-4 rounded-2xl border border-slate-800/80">
-            <div className="flex-1 font-mono text-[11px] text-slate-400 select-all overflow-x-auto whitespace-pre leading-normal w-full max-w-full">
-              {`ALTER TABLE users ADD COLUMN IF NOT EXISTS claimable_sum NUMERIC DEFAULT 0;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS last_tick_time BIGINT DEFAULT 0;
-NOTIFY pgrst, 'reload schema';`}
-            </div>
-            <button
-              onClick={handleCopyCmd}
-              className="w-full sm:w-auto px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md shadow-amber-500/10 shrink-0 cursor-pointer"
-            >
-              {copiedCmd ? 'Copié !' : 'Copier le script SQL'}
-            </button>
-          </div>
-        </motion.div>
-      )}
-
       {/* ==================== VIP LEVEL TICKETS COMPONENT ==================== */}
       {(() => null)()}
 
@@ -1827,37 +1727,6 @@ NOTIFY pgrst, 'reload schema';`}
                   <span>Changer le Thème</span>
                 </button>
               )}
-            </div>
-          </div>
-
-          {/* Supabase Cloud Database Status & Configuration Card */}
-          <div className="bg-slate-900/90 border border-emerald-500/25 rounded-3xl p-5 sm:p-6 space-y-3 relative overflow-hidden shadow-lg">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-slate-950 font-black shadow-lg shrink-0 ${supabaseStatus?.connected ? 'bg-gradient-to-br from-emerald-400 to-teal-500 shadow-emerald-500/20' : 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-amber-500/20'}`}>
-                  <Database className="w-6 h-6 text-slate-950" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    Base de Données Cloud Supabase
-                    <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full border ${supabaseStatus?.connected ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border-amber-500/30'}`}>
-                      {supabaseStatus?.connected ? '● En Ligne / Connecté' : '● Mode Local Résilient'}
-                    </span>
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    {supabaseStatus?.connected
-                      ? 'Vos utilisateurs, soldes et gains sont synchronisés en direct sur Supabase Cloud.'
-                      : 'Connectez votre projet Supabase pour synchroniser et persister vos données sur le Cloud.'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsSupabaseModalOpen(true)}
-                className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs rounded-xl shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all shrink-0"
-              >
-                <Database className="w-4 h-4" />
-                <span>{supabaseStatus?.connected ? 'Gérer Supabase' : 'Connecter Supabase'}</span>
-              </button>
             </div>
           </div>
 
@@ -2884,150 +2753,6 @@ NOTIFY pgrst, 'reload schema';`}
         showToast={showToast}
       />
 
-      {/* Supabase Connection & Configuration Modal */}
-      <AnimatePresence>
-        {isSupabaseModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 max-w-lg w-full space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 text-slate-950 flex items-center justify-center font-black shadow-md shadow-emerald-500/20">
-                    <Database className="w-5 h-5 text-slate-950" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
-                      Connecter Supabase Cloud
-                    </h3>
-                    <p className="text-[11px] text-slate-400">
-                      Synchronisation des utilisateurs, soldes et transactions
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setIsSupabaseModalOpen(false)}
-                  className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Status Banner */}
-              <div className={`p-3.5 rounded-2xl border flex items-center justify-between ${supabaseStatus?.connected ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 'bg-amber-500/10 border-amber-500/30 text-amber-300'}`}>
-                <div className="flex items-center gap-2.5 text-xs font-semibold">
-                  <div className={`w-2.5 h-2.5 rounded-full ${supabaseStatus?.connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-                  <span>Statut : {supabaseStatus?.connected ? 'Connecté à Supabase Cloud' : 'Mode Local Résilient (Non connecté)'}</span>
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950/50">
-                  {supabaseStatus?.engine || 'Local'}
-                </span>
-              </div>
-
-              {/* Step 1: SQL Script Guide */}
-              <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-200">1. Tables SQL (à exécuter dans Supabase)</span>
-                  <button
-                    onClick={() => {
-                      const sql = `-- Script SQL Gold Yield
-CREATE TABLE IF NOT EXISTS users (phone TEXT PRIMARY KEY, name TEXT NOT NULL, password TEXT NOT NULL, invite_code TEXT DEFAULT 'GOLDYIELD', balance NUMERIC DEFAULT 1000, claimable_sum NUMERIC DEFAULT 0, last_tick_time BIGINT DEFAULT 0, created_at TIMESTAMPTZ DEFAULT NOW());
-CREATE TABLE IF NOT EXISTS active_investments (id TEXT PRIMARY KEY, user_phone TEXT REFERENCES users(phone) ON DELETE CASCADE, plan_id TEXT NOT NULL, plan_name TEXT NOT NULL, price NUMERIC NOT NULL, daily_profit NUMERIC NOT NULL, date_activated TEXT NOT NULL, last_collected_date TEXT NOT NULL, total_collected NUMERIC DEFAULT 0, total_profit NUMERIC NOT NULL, duration_days NUMERIC NOT NULL, created_at TIMESTAMPTZ DEFAULT NOW());
-CREATE TABLE IF NOT EXISTS transactions (id TEXT PRIMARY KEY, user_phone TEXT REFERENCES users(phone) ON DELETE CASCADE, type TEXT NOT NULL, amount NUMERIC NOT NULL, date TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', details TEXT, created_at TIMESTAMPTZ DEFAULT NOW());
-CREATE TABLE IF NOT EXISTS investment_plans (id TEXT PRIMARY KEY, name TEXT NOT NULL, price NUMERIC NOT NULL, daily_profit NUMERIC DEFAULT 0, duration_days NUMERIC DEFAULT 30, total_profit NUMERIC DEFAULT 0, created_at TIMESTAMPTZ DEFAULT NOW());
-TRUNCATE TABLE investment_plans CASCADE;
-INSERT INTO investment_plans (id, name, price, daily_profit, duration_days, total_profit) VALUES
-('vip1_machine', 'Pack Machine VIP 1', 1800, 1000, 30, 30000),
-('vip2_article1', 'Broyeur Hydraulique Quartz 24K (VIP 2 • 1/3)', 25000, 0, 30, 0),
-('vip2_article2', 'Refroidisseur de Creusets d''Or (VIP 2 • 2/3)', 50000, 0, 30, 0),
-('vip2_article3', 'Moule & Filtre Spectrométrique (VIP 2 • 3/3)', 75000, 3000, 30, 200000);`;
-                      navigator.clipboard.writeText(sql);
-                      if (showToast) showToast('Script SQL copié dans le presse-papier !', 'success');
-                    }}
-                    className="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copier le SQL</span>
-                  </button>
-                </div>
-                <p className="text-[11px] text-slate-400">
-                  Sur <strong>supabase.com</strong> ➔ <strong>SQL Editor</strong> ➔ coller et cliquer sur <strong>Run</strong>.
-                </p>
-              </div>
-
-              {/* Step 2: Form */}
-              <div className="space-y-3">
-                <span className="text-xs font-bold text-slate-200 block">2. Vos identifiants Supabase</span>
-                <div>
-                  <label className="text-[11px] font-bold text-slate-300 mb-1 block">
-                    Project URL (ex: https://xyzcompany.supabase.co)
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://votre-projet.supabase.co"
-                    value={supabaseUrlInput}
-                    onChange={(e) => setSupabaseUrlInput(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-slate-300 mb-1 block">
-                    API Key (service_role secret ou anon public)
-                  </label>
-                  <textarea
-                    rows={2}
-                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    value={supabaseKeyInput}
-                    onChange={(e) => setSupabaseKeyInput(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-col gap-2">
-                <button
-                  onClick={handleConnectSupabase}
-                  disabled={supabaseLoading}
-                  className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  {supabaseLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Test de connexion en cours...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Database className="w-4 h-4" />
-                      <span>Tester & Connecter en Direct</span>
-                    </>
-                  )}
-                </button>
-
-                {supabaseStatus?.connected && (
-                  <button
-                    onClick={handleDisconnectSupabase}
-                    className="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-xs rounded-xl border border-red-500/30 transition-all cursor-pointer"
-                  >
-                    Déconnecter la base actuelle
-                  </button>
-                )}
-
-                <button
-                  onClick={() => setIsSupabaseModalOpen(false)}
-                  className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-all"
-                >
-                  Fermer
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
     </div>
   );
