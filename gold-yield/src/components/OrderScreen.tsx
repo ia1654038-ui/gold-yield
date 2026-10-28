@@ -14,13 +14,15 @@ interface OrderScreenProps {
   userBalance: number;
   onBack: () => void;
   onPurchaseSuccess: (price: number, plan: InvestmentPlan) => void;
+  onOpenRecharge?: () => void;
 }
 
-export function OrderScreen({ plan, userBalance, onBack, onPurchaseSuccess }: OrderScreenProps) {
+export function OrderScreen({ plan, userBalance, onBack, onPurchaseSuccess, onOpenRecharge }: OrderScreenProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const isBalanceSufficient = userBalance >= plan.price;
+  const missingDifference = Math.max(0, plan.price - userBalance);
 
   const handlePay = () => {
     if (isProcessing || feedback) return;
@@ -28,7 +30,7 @@ export function OrderScreen({ plan, userBalance, onBack, onPurchaseSuccess }: Or
     if (!isBalanceSufficient) {
       setFeedback({
         type: 'error',
-        message: '❌ Solde insuffisant ! Veuillez recharger votre portefeuille.',
+        message: `❌ Solde insuffisant ! Votre portefeuille principal est de ${userBalance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missingDifference.toLocaleString('fr-FR')} FCFA pour acheter cet article (Prix : ${plan.price.toLocaleString('fr-FR')} FCFA). Veuillez recharger votre portefeuille principal.`,
       });
       return;
     }
@@ -155,10 +157,33 @@ export function OrderScreen({ plan, userBalance, onBack, onPurchaseSuccess }: Or
 
               <div className="flex justify-between py-1">
                 <span className="text-slate-400">Votre solde actuel</span>
-                <span className={`font-bold ${isBalanceSufficient ? 'text-white' : 'text-red-400'}`}>
+                <span className={`font-bold ${isBalanceSufficient ? 'text-white' : 'text-amber-400'}`}>
                   {userBalance.toLocaleString('fr-FR')} FCFA
                 </span>
               </div>
+
+              {!isBalanceSufficient && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3.5 space-y-2 mt-2">
+                  <div className="flex justify-between items-center text-red-400 font-bold text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                      Solde insuffisant
+                    </span>
+                    <span className="font-mono text-sm text-red-400">Manque : +{missingDifference.toLocaleString('fr-FR')} FCFA</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Votre portefeuille principal dispose de <strong>{userBalance.toLocaleString('fr-FR')} FCFA</strong>. Il vous manque <strong>{missingDifference.toLocaleString('fr-FR')} FCFA</strong> pour acheter cet article à <strong>{plan.price.toLocaleString('fr-FR')} FCFA</strong>. Veuillez recharger votre portefeuille.
+                  </p>
+                  {onOpenRecharge && (
+                    <button
+                      onClick={onOpenRecharge}
+                      className="w-full py-2 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-lg transition-all shadow cursor-pointer mt-1"
+                    >
+                      Recharger +{missingDifference.toLocaleString('fr-FR')} FCFA
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -193,18 +218,23 @@ export function OrderScreen({ plan, userBalance, onBack, onPurchaseSuccess }: Or
             </button>
 
             <button
-              onClick={handlePay}
+              onClick={isBalanceSufficient ? handlePay : (onOpenRecharge || handlePay)}
               disabled={isProcessing || (feedback !== null && feedback.type === 'success')}
               className={`flex-1 py-3.5 px-6 font-bold text-sm rounded-xl text-slate-950 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 ${
                 isBalanceSufficient
                   ? 'bg-gradient-to-r from-gold-400 to-amber-500 hover:from-gold-300 hover:to-amber-400 shadow-gold-500/10 hover:shadow-gold-500/20'
-                  : 'bg-slate-800 text-slate-400 border border-slate-700 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 shadow-amber-500/20'
               }`}
             >
               {isProcessing ? (
                 <span>Transaction en cours...</span>
               ) : feedback && feedback.type === 'success' ? (
                 <span>Déjà activé !</span>
+              ) : !isBalanceSufficient ? (
+                <>
+                  <AlertCircle className="w-4 h-4 text-slate-950" />
+                  <span>Recharger +{missingDifference.toLocaleString('fr-FR')} FCFA</span>
+                </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 animate-pulse" />

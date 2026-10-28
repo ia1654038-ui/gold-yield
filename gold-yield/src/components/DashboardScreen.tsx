@@ -339,9 +339,39 @@ export function DashboardScreen({
     }
   }, [vip2CommanderStep]);
 
+  const getCurrentVip1ArticleInfo = () => {
+    switch (vip1SavedStep) {
+      case 'article5':
+        return { price: 30300, name: "Moule & Filtre Pureté Finale Lingots 24K (VIP 1 • Étape 5/5 • 30 300 FCFA)", label: "Étape 5/5 • 30 300 FCFA" };
+      case 'article4':
+        return { price: 15500, name: "Refroidisseur & Thermorégulateur de Creusets (VIP 1 • Étape 4/5 • 15 500 FCFA)", label: "Étape 4/5 • 15 500 FCFA" };
+      case 'article3':
+        return { price: 6300, name: "Broyeur Hydraulique Quartz 24K (VIP 1 • Étape 3/5 • 6 300 FCFA)", label: "Étape 3/5 • 6 300 FCFA" };
+      case 'article2':
+        return { price: 2100, name: "Sonde Spectrométrique Lazer (VIP 1 • Étape 2/5 • 2 100 FCFA)", label: "Étape 2/5 • 2 100 FCFA" };
+      case 'article1':
+      default:
+        return { price: 1820, name: "Pelle & Détecteur Aurifère (VIP 1 • Étape 1/5 • 1 820 FCFA)", label: "Étape 1/5 • 1 820 FCFA" };
+    }
+  };
+
   const handleStartVip1Commander = () => {
     if (isVip1Finished) {
       if (showToast) showToast("Le niveau VIP 1 est déjà terminé, validé et bloqué !", "info");
+      return;
+    }
+    const currentArt = getCurrentVip1ArticleInfo();
+    if (balance < currentArt.price) {
+      const missing = currentArt.price - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
+      setVipLevelModal(null);
+      setInsufficientBalanceModal({
+        requiredPrice: currentArt.price,
+        missingAmount: missing,
+        articleName: currentArt.name
+      });
       return;
     }
     setVipLevelModal(null);
@@ -364,11 +394,15 @@ export function DashboardScreen({
       return;
     }
     if (balance < 50000) {
+      const missing = 50000 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setVipLevelModal(null);
       setInsufficientBalanceModal({
         requiredPrice: 50000,
-        missingAmount: 50000 - balance,
-        articleName: "Accès Article VIP 2 (Solde minimum requis : 50 000 FCFA)"
+        missingAmount: missing,
+        articleName: "Station Industrielle d'Extraction Aurifère (VIP 2 • 1/1 • 50 000 FCFA)"
       });
       return;
     }
@@ -379,10 +413,14 @@ export function DashboardScreen({
   // VIP 1 Article 1: 1 820 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer
   const handlePayArticle1 = () => {
     if (balance < 1820) {
+      const missing = 1820 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setInsufficientBalanceModal({
         requiredPrice: 1820,
-        missingAmount: 1820 - balance,
-        articleName: "Pelle & Détecteur Aurifère (VIP 1 • 1/5 • 1 820 FCFA)"
+        missingAmount: missing,
+        articleName: "Pelle & Détecteur Aurifère (VIP 1 • Étape 1/5 • 1 820 FCFA)"
       });
       return;
     }
@@ -401,10 +439,14 @@ export function DashboardScreen({
   // VIP 1 Article 2: 2 100 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer (cumul 192k)
   const handlePayArticle2 = () => {
     if (balance < 2100) {
+      const missing = 2100 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setInsufficientBalanceModal({
         requiredPrice: 2100,
-        missingAmount: 2100 - balance,
-        articleName: "Sonde Spectrométrique Lazer (VIP 1 • 2/5 • 2 100 FCFA)"
+        missingAmount: missing,
+        articleName: "Sonde Spectrométrique Lazer (VIP 1 • Étape 2/5 • 2 100 FCFA)"
       });
       return;
     }
@@ -423,10 +465,14 @@ export function DashboardScreen({
   // VIP 1 Article 3: 6 300 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer (cumul 288k)
   const handlePayArticle3 = () => {
     if (balance < 6300) {
+      const missing = 6300 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setInsufficientBalanceModal({
         requiredPrice: 6300,
-        missingAmount: 6300 - balance,
-        articleName: "Broyeur Hydraulique Quartz 24K (VIP 1 • 3/5 • 6 300 FCFA)"
+        missingAmount: missing,
+        articleName: "Broyeur Hydraulique Quartz 24K (VIP 1 • Étape 3/5 • 6 300 FCFA)"
       });
       return;
     }
@@ -445,10 +491,14 @@ export function DashboardScreen({
   // VIP 1 Article 4: 15 500 FCFA -> Gain +96 000 FCFA débloqué dans Capital à retirer (cumul 384k)
   const handlePayArticle4 = () => {
     if (balance < 15500) {
+      const missing = 15500 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setInsufficientBalanceModal({
         requiredPrice: 15500,
-        missingAmount: 15500 - balance,
-        articleName: "Refroidisseur & Thermorégulateur de Creusets (VIP 1 • 4/5 • 15 500 FCFA)"
+        missingAmount: missing,
+        articleName: "Refroidisseur & Thermorégulateur de Creusets (VIP 1 • Étape 4/5 • 15 500 FCFA)"
       });
       return;
     }
@@ -467,10 +517,14 @@ export function DashboardScreen({
   // VIP 1 Article 5: 30 300 FCFA -> Finish VIP 1 (Total 480 000 FCFA débloqué dans Capital à retirer)
   const handlePayArticle5 = () => {
     if (balance < 30300) {
+      const missing = 30300 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setInsufficientBalanceModal({
         requiredPrice: 30300,
-        missingAmount: 30300 - balance,
-        articleName: "Moule & Filtre Pureté Finale Lingots 24K (VIP 1 • 5/5 • 30 300 FCFA)"
+        missingAmount: missing,
+        articleName: "Moule & Filtre Pureté Finale Lingots 24K (VIP 1 • Étape 5/5 • 30 300 FCFA)"
       });
       return;
     }
@@ -500,9 +554,13 @@ export function DashboardScreen({
   // VIP 2 Single Article 1/1: 50 000 FCFA -> Finish VIP 2 (800 000 FCFA débloqué dans Capital à retirer)
   const handlePayVip2Article1 = () => {
     if (balance < 50000) {
+      const missing = 50000 - balance;
+      if (showToast) {
+        showToast(`Solde insuffisant ! Votre portefeuille principal est de ${balance.toLocaleString('fr-FR')} FCFA. Il vous manque ${missing.toLocaleString('fr-FR')} FCFA pour acheter cet article.`, 'error');
+      }
       setInsufficientBalanceModal({
         requiredPrice: 50000,
-        missingAmount: 50000 - balance,
+        missingAmount: missing,
         articleName: "Station Industrielle d'Extraction Aurifère (VIP 2 • 1/1 • 50 000 FCFA)"
       });
       return;
@@ -2076,35 +2134,36 @@ export function DashboardScreen({
               )}
 
               <div className="flex flex-col gap-2 pt-2">
-                {vipLevelModal.isVip1 && !isVip1Finished && (
-                  isVip1Unlocked ? (
+                {vipLevelModal.isVip1 && !isVip1Finished && (() => {
+                  const currentArt = getCurrentVip1ArticleInfo();
+                  const isSufficient = balance >= currentArt.price;
+                  const missing = currentArt.price - balance;
+                  return (
                     <button
                       onClick={handleStartVip1Commander}
-                      className="w-full py-3.5 bg-gradient-to-r from-emerald-400 via-amber-400 to-yellow-400 hover:from-emerald-300 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl transition-all shadow-lg shadow-amber-500/25 cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+                      className={`w-full py-3.5 text-slate-950 font-black text-xs rounded-xl transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2 active:scale-95 ${
+                        isSufficient
+                          ? 'bg-gradient-to-r from-emerald-400 via-amber-400 to-yellow-400 hover:from-emerald-300 hover:to-yellow-300 shadow-amber-500/25'
+                          : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 shadow-amber-500/20'
+                      }`}
                     >
                       <ShoppingCart className="w-4 h-4 text-slate-950" />
                       <span>
-                        {vip1SavedStep === 'article5'
-                          ? 'Reprendre la commande VIP 1 (Étape 5/5 • 30 300 FCFA)'
-                          : vip1SavedStep === 'article4'
-                          ? 'Reprendre la commande VIP 1 (Étape 4/5 • 15 500 FCFA)'
-                          : vip1SavedStep === 'article3'
-                          ? 'Reprendre la commande VIP 1 (Étape 3/5 • 6 300 FCFA)'
-                          : vip1SavedStep === 'article2'
-                          ? 'Reprendre la commande VIP 1 (Étape 2/5 • 2 100 FCFA)'
-                          : 'Commander (Articles VIP 1 • Étape 1/5 • 1 820 FCFA)'}
+                        {isSufficient
+                          ? (vip1SavedStep === 'article5'
+                              ? 'Reprendre la commande VIP 1 (Étape 5/5 • 30 300 FCFA)'
+                              : vip1SavedStep === 'article4'
+                              ? 'Reprendre la commande VIP 1 (Étape 4/5 • 15 500 FCFA)'
+                              : vip1SavedStep === 'article3'
+                              ? 'Reprendre la commande VIP 1 (Étape 3/5 • 6 300 FCFA)'
+                              : vip1SavedStep === 'article2'
+                              ? 'Reprendre la commande VIP 1 (Étape 2/5 • 2 100 FCFA)'
+                              : 'Commander (Articles VIP 1 • Étape 1/5 • 1 820 FCFA)')
+                          : `Commander (Étape ${currentArt.label} • Manque : +${missing.toLocaleString('fr-FR')} FCFA)`}
                       </span>
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => handleTriggerMentorDepositPopup('VIP 1')}
-                      className="w-full py-3.5 bg-slate-800 hover:bg-slate-750 text-amber-300 font-black text-xs rounded-xl border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-                    >
-                      <Lock className="w-4 h-4 text-amber-400" />
-                      <span>Solde insuffisant pour commander (Dépôt requis)</span>
-                    </button>
-                  )
-                )}
+                  );
+                })()}
 
                 {vipLevelModal.isVip1 && isVip1Finished && (
                   <div className="w-full py-3.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 opacity-90 select-none cursor-not-allowed">
@@ -2113,25 +2172,27 @@ export function DashboardScreen({
                   </div>
                 )}
 
-                {vipLevelModal.isVip2 && !isVip2Finished && (
-                  isVip2Unlocked ? (
+                {vipLevelModal.isVip2 && !isVip2Finished && (() => {
+                  const isSufficient = balance >= 50000;
+                  const missing = 50000 - balance;
+                  return (
                     <button
                       onClick={handleStartVip2Commander}
-                      className="w-full py-3.5 bg-gradient-to-r from-emerald-400 via-amber-400 to-yellow-400 hover:from-emerald-300 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl transition-all shadow-lg shadow-amber-500/25 cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+                      className={`w-full py-3.5 text-slate-950 font-black text-xs rounded-xl transition-all shadow-lg cursor-pointer flex items-center justify-center gap-2 active:scale-95 ${
+                        isSufficient
+                          ? 'bg-gradient-to-r from-emerald-400 via-amber-400 to-yellow-400 hover:from-emerald-300 hover:to-yellow-300 shadow-amber-500/25'
+                          : 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 shadow-amber-500/20'
+                      }`}
                     >
                       <ShoppingCart className="w-4 h-4 text-slate-950" />
-                      <span>Commander (Article de mine VIP 2 • 1/1 • 50 000 FCFA)</span>
+                      <span>
+                        {isSufficient
+                          ? 'Commander (Article de mine VIP 2 • 1/1 • 50 000 FCFA)'
+                          : `Commander (VIP 2 • 50 000 FCFA • Manque : +${missing.toLocaleString('fr-FR')} FCFA)`}
+                      </span>
                     </button>
-                  ) : (
-                    <button
-                      onClick={() => handleTriggerMentorDepositPopup('VIP 2')}
-                      className="w-full py-3.5 bg-slate-800 hover:bg-slate-750 text-amber-300 font-black text-xs rounded-xl border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-                    >
-                      <Lock className="w-4 h-4 text-amber-400" />
-                      <span>Solde insuffisant pour commander (Dépôt min. 10 000F)</span>
-                    </button>
-                  )
-                )}
+                  );
+                })()}
 
                 {vipLevelModal.isVip2 && isVip2Finished && (
                   <div className="w-full py-3.5 bg-slate-900 border border-emerald-500/40 text-emerald-400 font-extrabold text-xs rounded-xl flex items-center justify-center gap-2 opacity-90 select-none cursor-not-allowed">
@@ -2325,6 +2386,18 @@ export function DashboardScreen({
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                       Achetez le premier article au prix de <strong>1 820 FCFA</strong> et recevez immédiatement <strong>+96 000 FCFA</strong> dans votre capital à retirer !
                     </p>
+
+                    {balance < 1820 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs space-y-1">
+                        <div className="flex justify-between items-center text-red-400 font-bold">
+                          <span className="flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> Solde insuffisant</span>
+                          <span className="font-mono text-xs">Manque : +{(1820 - balance).toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          Votre portefeuille principal : <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Différence à recharger : <strong>+{(1820 - balance).toLocaleString('fr-FR')} FCFA</strong>.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -2332,7 +2405,11 @@ export function DashboardScreen({
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 1 820 FCFA (Étape 1/5 • Gain +96 000 F débloqué)</span>
+                    <span>
+                      {balance < 1820
+                        ? `Payer 1 820 FCFA (Manque : +${(1820 - balance).toLocaleString('fr-FR')} FCFA)`
+                        : 'Payer 1 820 FCFA (Étape 1/5 • Gain +96 000 F débloqué)'}
+                    </span>
                   </button>
                 </div>
               )}
@@ -2369,6 +2446,18 @@ export function DashboardScreen({
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                       Réglez le second équipement à <strong>2 100 FCFA</strong> et encaissez <strong>+96 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 192 000 FCFA).
                     </p>
+
+                    {balance < 2100 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs space-y-1">
+                        <div className="flex justify-between items-center text-red-400 font-bold">
+                          <span className="flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> Solde insuffisant</span>
+                          <span className="font-mono text-xs">Manque : +{(2100 - balance).toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          Votre portefeuille principal : <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Différence à recharger : <strong>+{(2100 - balance).toLocaleString('fr-FR')} FCFA</strong>.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -2376,7 +2465,11 @@ export function DashboardScreen({
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 2 100 FCFA (Étape 2/5 • Gain +96 000 F débloqué)</span>
+                    <span>
+                      {balance < 2100
+                        ? `Payer 2 100 FCFA (Manque : +${(2100 - balance).toLocaleString('fr-FR')} FCFA)`
+                        : 'Payer 2 100 FCFA (Étape 2/5 • Gain +96 000 F débloqué)'}
+                    </span>
                   </button>
                 </div>
               )}
@@ -2413,6 +2506,18 @@ export function DashboardScreen({
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                       Acquérez le 3e équipement de broyage à <strong>6 300 FCFA</strong> et recevez <strong>+96 000 FCFA</strong> supplémentaires dans votre capital à retirer (cumul : 288 000 FCFA).
                     </p>
+
+                    {balance < 6300 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs space-y-1">
+                        <div className="flex justify-between items-center text-red-400 font-bold">
+                          <span className="flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> Solde insuffisant</span>
+                          <span className="font-mono text-xs">Manque : +{(6300 - balance).toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          Votre portefeuille principal : <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Différence à recharger : <strong>+{(6300 - balance).toLocaleString('fr-FR')} FCFA</strong>.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -2420,7 +2525,11 @@ export function DashboardScreen({
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 6 300 FCFA (Étape 3/5 • Gain +96 000 F débloqué)</span>
+                    <span>
+                      {balance < 6300
+                        ? `Payer 6 300 FCFA (Manque : +${(6300 - balance).toLocaleString('fr-FR')} FCFA)`
+                        : 'Payer 6 300 FCFA (Étape 3/5 • Gain +96 000 F débloqué)'}
+                    </span>
                   </button>
                 </div>
               )}
@@ -2457,6 +2566,18 @@ export function DashboardScreen({
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                       Réglez le 4e article à <strong>15 500 FCFA</strong> et recevez <strong>+96 000 FCFA</strong> de récompense immédiate (cumul : 384 000 FCFA).
                     </p>
+
+                    {balance < 15500 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs space-y-1">
+                        <div className="flex justify-between items-center text-red-400 font-bold">
+                          <span className="flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> Solde insuffisant</span>
+                          <span className="font-mono text-xs">Manque : +{(15500 - balance).toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          Votre portefeuille principal : <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Différence à recharger : <strong>+{(15500 - balance).toLocaleString('fr-FR')} FCFA</strong>.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -2464,7 +2585,11 @@ export function DashboardScreen({
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <CheckCircle className="w-5 h-5 text-slate-950" />
-                    <span>Payer 15 500 FCFA (Étape 4/5 • Gain +96 000 F débloqué)</span>
+                    <span>
+                      {balance < 15500
+                        ? `Payer 15 500 FCFA (Manque : +${(15500 - balance).toLocaleString('fr-FR')} FCFA)`
+                        : 'Payer 15 500 FCFA (Étape 4/5 • Gain +96 000 F débloqué)'}
+                    </span>
                   </button>
                 </div>
               )}
@@ -2501,6 +2626,18 @@ export function DashboardScreen({
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                       Réglez ce 5e et dernier article à <strong>30 300 FCFA</strong> pour clôturer définitivement le cycle VIP 1 et toucher votre dernière tranche de <strong>96 000 FCFA</strong> (gain total : <strong>480 000 FCFA</strong>) !
                     </p>
+
+                    {balance < 30300 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs space-y-1">
+                        <div className="flex justify-between items-center text-red-400 font-bold">
+                          <span className="flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> Solde insuffisant</span>
+                          <span className="font-mono text-xs">Manque : +{(30300 - balance).toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          Votre portefeuille principal : <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Différence à recharger : <strong>+{(30300 - balance).toLocaleString('fr-FR')} FCFA</strong>.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -2508,7 +2645,11 @@ export function DashboardScreen({
                     className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Crown className="w-5 h-5 text-slate-950" />
-                    <span>Payer 30 300 FCFA (Étape 5/5 • Gain Final 480 000 F débloqué)</span>
+                    <span>
+                      {balance < 30300
+                        ? `Payer 30 300 FCFA (Manque : +${(30300 - balance).toLocaleString('fr-FR')} FCFA)`
+                        : 'Payer 30 300 FCFA (Étape 5/5 • Gain Final 480 000 F débloqué)'}
+                    </span>
                   </button>
                 </div>
               )}
@@ -2637,6 +2778,18 @@ export function DashboardScreen({
                     <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
                       Réglez cet article unique de mine VIP 2 à <strong>50 000 FCFA</strong> pour valider définitivement le VIP 2 et percevoir immédiatement votre prime spéciale de <strong>800 000 FCFA</strong> !
                     </p>
+
+                    {balance < 50000 && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-xs space-y-1">
+                        <div className="flex justify-between items-center text-red-400 font-bold">
+                          <span className="flex items-center gap-1.5"><AlertCircle className="w-3.5 h-3.5" /> Solde insuffisant</span>
+                          <span className="font-mono text-xs">Manque : +{(50000 - balance).toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                        <p className="text-[11px] text-slate-300">
+                          Votre portefeuille principal : <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Différence à recharger : <strong>+{(50000 - balance).toLocaleString('fr-FR')} FCFA</strong>.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -2645,7 +2798,11 @@ export function DashboardScreen({
                       className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-500 hover:from-emerald-400 hover:to-green-300 text-slate-950 font-black text-sm rounded-xl shadow-xl shadow-emerald-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                     >
                       <Crown className="w-5 h-5 text-slate-950" />
-                      <span>Payer 50 000 FCFA sur Solde (Gain 800 000 F débloqué)</span>
+                      <span>
+                        {balance < 50000
+                          ? `Payer 50 000 FCFA (Manque : +${(50000 - balance).toLocaleString('fr-FR')} FCFA)`
+                          : 'Payer 50 000 FCFA sur Solde (Gain 800 000 F débloqué)'}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -2729,69 +2886,68 @@ export function DashboardScreen({
 
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-850">
                   <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block">Prix de l'article</span>
+                    <span className="text-[10px] text-slate-400 block font-semibold">Prix de l'article</span>
                     <span className="text-sm font-black font-mono text-white">
-                      {insufficientBalanceModal.requiredPrice.toLocaleString('fr-FR')} F
+                      {insufficientBalanceModal.requiredPrice.toLocaleString('fr-FR')} FCFA
                     </span>
                   </div>
                   <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block">Votre solde actuel</span>
-                    <span className="text-sm font-black font-mono text-slate-300">
-                      {balance.toLocaleString('fr-FR')} F
+                    <span className="text-[10px] text-slate-400 block font-semibold">Portefeuille Principal</span>
+                    <span className="text-sm font-black font-mono text-amber-300">
+                      {balance.toLocaleString('fr-FR')} FCFA
                     </span>
                   </div>
                 </div>
 
                 <div className="bg-red-500/10 border border-red-500/30 p-3 rounded-xl text-center space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-red-400 block">Montant à ajouter sur votre solde</span>
+                  <span className="text-[10px] uppercase font-bold text-red-400 block">Différence à recharger</span>
                   <span className="text-2xl font-black font-mono text-red-400 block">
                     +{insufficientBalanceModal.missingAmount.toLocaleString('fr-FR')} FCFA
                   </span>
                 </div>
 
-                <p className="text-[11px] text-slate-300 text-center leading-relaxed">
-                  Vous devez recharger au moins <strong>{insufficientBalanceModal.missingAmount.toLocaleString('fr-FR')} FCFA</strong> sur votre compte pour débloquer et passer cette commande.
+                <p className="text-xs text-slate-300 text-center leading-relaxed">
+                  Votre portefeuille principal est de <strong>{balance.toLocaleString('fr-FR')} FCFA</strong>. Il vous manque <strong>{insufficientBalanceModal.missingAmount.toLocaleString('fr-FR')} FCFA</strong> pour acheter cet article à <strong>{insufficientBalanceModal.requiredPrice.toLocaleString('fr-FR')} FCFA</strong>. Veuillez recharger votre portefeuille principal.
                 </p>
               </div>
 
               <div className="space-y-2 pt-1">
+                <button
+                  onClick={() => {
+                    setInsufficientBalanceModal(null);
+                    onOpenRecharge();
+                  }}
+                  className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 text-center cursor-pointer active:scale-95"
+                >
+                  <Wallet className="w-4 h-4 text-slate-950" />
+                  <span>Recharger mon portefeuille principal (+{insufficientBalanceModal.missingAmount.toLocaleString('fr-FR')} FCFA)</span>
+                </button>
+
                 {insufficientBalanceModal.articleName.includes('VIP 2') || insufficientBalanceModal.requiredPrice === 50000 ? (
                   <a
                     href="https://geniuspay.ci/product/refroidisseur-de-creusets-dor-SU8bSn"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
+                    className="w-full py-2.5 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white font-extrabold text-xs rounded-xl border border-slate-800 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>🔗 Payer directement sur GeniusPay (VIP 2 • 50 000 FCFA)</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Lien direct GeniusPay (VIP 2 • 50 000 FCFA)</span>
                   </a>
                 ) : (
                   <a
                     href="https://geniuspay.ci/product/article-vip1-HTWkud"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
+                    className="w-full py-2.5 bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white font-extrabold text-xs rounded-xl border border-slate-800 transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>🔗 Payer directement sur GeniusPay (VIP 1)</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Lien direct GeniusPay (VIP 1)</span>
                   </a>
                 )}
 
                 <button
-                  onClick={() => {
-                    const level = insufficientBalanceModal.articleName.includes('VIP 2') ? 'VIP 2' : 'VIP 1';
-                    setInsufficientBalanceModal(null);
-                    handleTriggerMentorDepositPopup(level);
-                  }}
-                  className="w-full py-3 bg-slate-900 hover:bg-slate-850 text-amber-300 font-extrabold text-xs rounded-xl border border-amber-500/30 transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Wallet className="w-4 h-4 text-amber-400" />
-                  <span>Recharger le solde de mon compte (+{insufficientBalanceModal.missingAmount.toLocaleString('fr-FR')} FCFA)</span>
-                </button>
-
-                <button
                   onClick={() => setInsufficientBalanceModal(null)}
-                  className="w-full py-2.5 bg-slate-950 hover:bg-slate-800 text-slate-300 font-extrabold text-xs rounded-xl border border-slate-800 transition-all cursor-pointer"
+                  className="w-full py-2.5 bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white font-bold text-xs rounded-xl border border-slate-800 transition-all cursor-pointer"
                 >
                   Fermer
                 </button>

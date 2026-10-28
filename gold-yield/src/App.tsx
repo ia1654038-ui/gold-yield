@@ -656,6 +656,7 @@ export default function App() {
             userBalance={balance}
             onBack={() => setScreen('dashboard')}
             onPurchaseSuccess={handlePurchaseSuccess}
+            onOpenRecharge={() => setScreen('recharge')}
           />
         )}
 
