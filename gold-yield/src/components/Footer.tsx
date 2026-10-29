@@ -56,16 +56,16 @@ export function Footer() {
           <div className="space-y-3">
             <h4 className="text-xs uppercase tracking-wider font-bold text-slate-300">Nous Contacter</h4>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Pour toute question relative à vos investissements ou transactions, notre support officiel est disponible en continu sur Telegram.
+              Pour toute question, orientation ou transaction, notre assistante officielle est disponible en direct sur Telegram.
             </p>
             <a
-              href="https://t.me/goldyieldservice"
+              href="https://t.me/GoLdyields"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-sky-500/30 text-xs font-semibold text-slate-300 hover:text-sky-400 rounded-xl transition-all"
             >
               <MessageSquare className="w-3.5 h-3.5 text-sky-400" />
-              <span>Support Telegram</span>
+              <span>Assistante @GoLdyields</span>
             </a>
           </div>
 

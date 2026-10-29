@@ -131,7 +131,7 @@ export function WithdrawScreen({
 
     const computedFee = Math.round(parsedAmount * 0.10);
     const computedNet = parsedAmount - computedFee;
-    const telegramUsername = 'goldyieldservice';
+    const telegramUsername = 'GoLdyields';
     const txRef = `GY-WDR-${Date.now().toString().slice(-8)}`;
 
     const message = `Bonjour Gold Yield ! 💸\n\n` +

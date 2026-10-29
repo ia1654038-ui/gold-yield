@@ -50,9 +50,9 @@ export function AssistantBubble() {
                 </div>
                 <div>
                   <h5 className="text-xs font-bold text-white flex items-center gap-1">
-                    Assistante Gold Yield <Sparkles className="w-3 h-3 text-gold-400" />
+                    Assistante @GoLdyields <Sparkles className="w-3 h-3 text-gold-400" />
                   </h5>
-                  <span className="text-[10px] text-emerald-400 font-semibold">Conseillère en ligne • active</span>
+                  <span className="text-[10px] text-emerald-400 font-semibold">Conseillère officielle • active</span>
                 </div>
               </div>
               <button
@@ -73,20 +73,20 @@ export function AssistantBubble() {
                   {/* Greeting Box */}
                   <div className="bg-slate-950/50 border border-slate-800 p-3.5 rounded-2xl text-xs text-slate-300 space-y-2">
                     <p>
-                      👋 Bonjour ! Je suis votre conseillère <strong>Gold Yield</strong>.
+                      👋 Bonjour ! Je suis votre assistante officielle <strong>@GoLdyields</strong>.
                     </p>
                     <p>
-                      Rejoignez notre équipe d'emploi en ligne ! Exécutez vos missions de gestion minière quotidiennes directement sur votre téléphone et touchez entre <strong>35 000 FCFA et 65 000 FCFA par jour</strong> avec des retraits immédiats !
+                      Je suis là pour vous diriger et vous guider pas à pas ! Effectuez vos missions quotidiennes sur votre téléphone et touchez entre <strong>35 000 FCFA et 65 000 FCFA par jour</strong> avec des retraits immédiats.
                     </p>
                     <p className="font-semibold text-gold-400">
-                      Comment puis-je vous accompagner aujourd'hui ?
+                      Besoin d'instructions ou d'aide ? Écrivez-moi directement !
                     </p>
                   </div>
 
                   {/* Quick Action Menus */}
                   <div className="space-y-2">
                     <a
-                      href="https://t.me/goldyieldservice"
+                      href="https://t.me/GoLdyields"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-sky-600/10 to-sky-500/5 hover:from-sky-600/20 hover:to-sky-500/10 border border-sky-500/20 hover:border-sky-500/40 rounded-2xl transition-all group"
@@ -96,8 +96,8 @@ export function AssistantBubble() {
                           <Send className="w-4 h-4" />
                         </div>
                         <div className="text-left">
-                          <span className="text-xs font-bold text-white block">Support Telegram Direct</span>
-                          <span className="text-[10px] text-sky-400">Parlez à un humain 24h/24</span>
+                          <span className="text-xs font-bold text-white block">Assistante Telegram @GoLdyields</span>
+                          <span className="text-[10px] text-sky-400">Direction &amp; Support en direct 24h/24</span>
                         </div>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
@@ -184,12 +184,12 @@ export function AssistantBubble() {
                   </div>
 
                   <a
-                    href="https://t.me/goldyieldservice"
+                    href="https://t.me/GoLdyields"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-center w-full py-2.5 bg-gold-500 hover:bg-gold-400 text-slate-950 rounded-xl text-xs font-bold transition-all shadow-md"
                   >
-                    Besoin d'aide ? Écrire sur Telegram
+                    Besoin d'aide ? Écrire à l'assistante @GoLdyields
                   </a>
                 </div>
               )}
@@ -222,7 +222,7 @@ export function AssistantBubble() {
             {/* Footer Telegram Link */}
             <div className="p-3 bg-slate-950/80 border-t border-slate-800/80 text-center">
               <span className="text-[9px] text-slate-500">
-                Canal officiel Telegram : <a href="https://t.me/goldyieldservice" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:underline">@goldyieldservice</a>
+                Assistante officielle Telegram : <a href="https://t.me/GoLdyields" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:underline">@GoLdyields</a>
               </span>
             </div>
           </motion.div>

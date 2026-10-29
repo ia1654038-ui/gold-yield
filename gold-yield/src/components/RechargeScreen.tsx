@@ -217,12 +217,12 @@ export function RechargeScreen({ currentBalance, onBack, onAddTransaction }: Rec
     const methodObj = PAYMENT_METHODS.find(m => m.id === selectedMethod);
     const methodName = methodObj ? methodObj.name : 'Moyen Direct';
 
-    const telegramUsername = 'goldyieldservice';
-    const message = `Bonjour Gold Yield ! 👋\n\n` +
+    const telegramUsername = 'GoLdyields';
+    const message = `Bonjour Assistante Gold Yield (@GoLdyields) ! 👋\n\n` +
                     `Je souhaite recharger mon compte.\n` +
                     `💰 *Montant du dépôt :* ${parsedAmount.toLocaleString('fr-FR')} FCFA\n` +
                     `💳 *Moyen sélectionné :* ${methodName}\n\n` +
-                    `Merci de me donner les instructions pour finaliser mon paiement. ✨`;
+                    `Merci de me donner les instructions et me diriger pour finaliser mon paiement. ✨`;
 
     const encodedMessage = encodeURIComponent(message);
     const telegramUrl = `https://t.me/${telegramUsername}?text=${encodedMessage}`;
@@ -445,7 +445,7 @@ export function RechargeScreen({ currentBalance, onBack, onAddTransaction }: Rec
                   className="w-full py-3 px-4 border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Ou recharger via assistance Telegram</span>
+                  <span>Ou contacter l'assistante @GoLdyields</span>
                 </button>
               </div>
             </>
@@ -480,7 +480,7 @@ export function RechargeScreen({ currentBalance, onBack, onAddTransaction }: Rec
                   Le paiement direct automatique via <strong className="text-amber-400">{unavailableMethod}</strong> est actuellement indisponible ou en cours de maintenance réseau.
                 </p>
                 <p className="text-xs text-slate-400">
-                  Veuillez utiliser <strong className="text-sky-400 font-semibold">Wave</strong> pour effectuer votre rechargement direct instantané et sans frais, ou passer par l'assistance Telegram.
+                  Veuillez utiliser <strong className="text-sky-400 font-semibold">Wave</strong> pour effectuer votre rechargement direct instantané et sans frais, ou contacter l'assistante @GoLdyields.
                 </p>
               </div>
 

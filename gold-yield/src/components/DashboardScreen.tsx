@@ -1153,7 +1153,7 @@ export function DashboardScreen({
             </button>
 
             <a
-              href="https://t.me/goldyieldservice"
+              href="https://t.me/GoLdyields"
               target="_blank"
               rel="noreferrer"
               className="p-4 bg-slate-900/90 hover:bg-slate-850 border border-white/[0.07] hover:border-sky-500/40 rounded-2xl transition-all text-left flex flex-col gap-3 group cursor-pointer shadow-lg shadow-black/20"
@@ -1162,8 +1162,8 @@ export function DashboardScreen({
                 <MessageSquare className="w-4.5 h-4.5 stroke-[2]" />
               </div>
               <div>
-                <span className="text-xs font-bold text-white block">Support Télégram</span>
-                <span className="text-[10px] text-slate-400">Assistance 24/7</span>
+                <span className="text-xs font-bold text-white block">Assistante @GoLdyields</span>
+                <span className="text-[10px] text-slate-400">Direction &amp; Support 24/7</span>
               </div>
             </a>
           </div>
@@ -1611,12 +1611,12 @@ export function DashboardScreen({
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
-                    href="https://t.me/goldyieldservice"
+                    href="https://t.me/GoLdyields"
                     target="_blank"
                     rel="noreferrer"
                     className="flex-1 py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all"
                   >
-                    <span>Rejoindre le canal Telegram VIP 3</span>
+                    <span>Contacter l'assistante VIP 3 @GoLdyields</span>
                   </a>
                 </div>
               </div>
@@ -1877,14 +1877,14 @@ export function DashboardScreen({
             </p>
             <div className="pt-2 flex flex-col gap-2">
               <a
-                href="https://t.me/goldyieldservice"
+                href="https://t.me/GoLdyields"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-between p-3 bg-slate-950 rounded-xl text-xs text-slate-300 hover:text-white border border-slate-850"
               >
                 <span className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-sky-400" />
-                  <span>Support Telegram Officiel</span>
+                  <span>Assistante Officielle @GoLdyields</span>
                 </span>
                 <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
               </a>
@@ -2281,13 +2281,13 @@ export function DashboardScreen({
 
               <div className="space-y-2 pt-2">
                 <a
-                  href="https://t.me/goldyieldservice"
+                  href="https://t.me/GoLdyields"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xs rounded-xl shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                 >
                   <Headphones className="w-4 h-4 text-slate-950" />
-                  <span>Contacter mon Mentor</span>
+                  <span>Contacter l'assistante @GoLdyields</span>
                 </a>
 
                 <button

@@ -114,7 +114,7 @@ const TUTORIAL_STEPS: Step[] = [
     tips: [
       'Commission instantanée de +10% sur chaque recharge réalisée par vos filleuls',
       'Vos invités reçoivent automatiquement leur bonus d\'accueil de 1 000 FCFA',
-      'Canal d\'assistance Telegram officiel @goldyieldservice disponible en continu'
+      'Assistante Telegram officielle @GoLdyields disponible en continu pour vous guider'
     ],
     actionLabel: 'Commencer maintenant'
   }
