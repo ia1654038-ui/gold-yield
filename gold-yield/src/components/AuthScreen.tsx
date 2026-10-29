@@ -9,22 +9,117 @@ import { Coins, Shield, Sparkles, User, Lock, Phone, Gift, Play } from 'lucide-r
 import imgRefinery from '../assets/images/gold_refinery_1783873491748.jpg';
 
 const COUNTRIES = [
+  // Afrique de l'Ouest
   { code: 'CI', dial: '+225', name: 'Côte d’Ivoire', flag: '🇨🇮' },
   { code: 'SN', dial: '+221', name: 'Sénégal', flag: '🇸🇳' },
   { code: 'BF', dial: '+226', name: 'Burkina Faso', flag: '🇧🇫' },
   { code: 'ML', dial: '+223', name: 'Mali', flag: '🇲🇱' },
+  { code: 'GN', dial: '+224', name: 'Guinée', flag: '🇬🇳' },
   { code: 'BJ', dial: '+229', name: 'Bénin', flag: '🇧🇯' },
   { code: 'TG', dial: '+228', name: 'Togo', flag: '🇹🇬' },
   { code: 'NE', dial: '+227', name: 'Niger', flag: '🇳🇪' },
+  { code: 'MR', dial: '+222', name: 'Mauritanie', flag: '🇲🇷' },
+  { code: 'GH', dial: '+233', name: 'Ghana', flag: '🇬🇭' },
+  { code: 'NG', dial: '+234', name: 'Nigeria', flag: '🇳🇬' },
+  { code: 'SL', dial: '+232', name: 'Sierra Leone', flag: '🇸🇱' },
+  { code: 'LR', dial: '+231', name: 'Libéria', flag: '🇱🇷' },
+  { code: 'GM', dial: '+220', name: 'Gambie', flag: '🇬🇲' },
+  { code: 'GW', dial: '+245', name: 'Guinée-Bissau', flag: '🇬🇼' },
+  { code: 'CV', dial: '+238', name: 'Cap-Vert', flag: '🇨🇻' },
+
+  // Afrique Centrale
   { code: 'CM', dial: '+237', name: 'Cameroun', flag: '🇨🇲' },
   { code: 'GA', dial: '+241', name: 'Gabon', flag: '🇬🇦' },
-  { code: 'CG', dial: '+242', name: 'Congo', flag: '🇨🇬' },
-  { code: 'CD', dial: '+243', name: 'RDC', flag: '🇨🇩' },
+  { code: 'CG', dial: '+242', name: 'Congo-Brazzaville', flag: '🇨🇬' },
+  { code: 'CD', dial: '+243', name: 'RDC Kinshasa', flag: '🇨🇩' },
+  { code: 'TD', dial: '+235', name: 'Tchad', flag: '🇹🇩' },
+  { code: 'CF', dial: '+236', name: 'Centrafrique', flag: '🇨🇫' },
+  { code: 'GQ', dial: '+240', name: 'Guinée Équatoriale', flag: '🇬🇶' },
+
+  // Afrique de l'Est & Océan Indien
+  { code: 'MG', dial: '+261', name: 'Madagascar', flag: '🇲🇬' },
+  { code: 'RW', dial: '+250', name: 'Rwanda', flag: '🇷🇼' },
+  { code: 'BI', dial: '+257', name: 'Burundi', flag: '🇧🇮' },
+  { code: 'KM', dial: '+269', name: 'Comores', flag: '🇰🇲' },
+  { code: 'DJ', dial: '+253', name: 'Djibouti', flag: '🇩🇯' },
+  { code: 'KE', dial: '+254', name: 'Kenya', flag: '🇰🇪' },
+  { code: 'TZ', dial: '+255', name: 'Tanzanie', flag: '🇹🇿' },
+  { code: 'UG', dial: '+256', name: 'Ouganda', flag: '🇺🇬' },
+  { code: 'ET', dial: '+251', name: 'Éthiopie', flag: '🇪🇹' },
+  { code: 'MU', dial: '+230', name: 'Île Maurice', flag: '🇲🇺' },
+
+  // Afrique du Nord
+  { code: 'MA', dial: '+212', name: 'Maroc', flag: '🇲🇦' },
+  { code: 'DZ', dial: '+213', name: 'Algérie', flag: '🇩🇿' },
+  { code: 'TN', dial: '+216', name: 'Tunisie', flag: '🇹🇳' },
+  { code: 'EG', dial: '+20', name: 'Égypte', flag: '🇪🇬' },
+
+  // Afrique Australe
+  { code: 'AO', dial: '+244', name: 'Angola', flag: '🇦🇴' },
+  { code: 'ZA', dial: '+27', name: 'Afrique du Sud', flag: '🇿🇦' },
+  { code: 'MZ', dial: '+258', name: 'Mozambique', flag: '🇲🇿' },
+
+  // Europe & Diaspora
   { code: 'FR', dial: '+33', name: 'France', flag: '🇫🇷' },
   { code: 'BE', dial: '+32', name: 'Belgique', flag: '🇧🇪' },
   { code: 'CH', dial: '+41', name: 'Suisse', flag: '🇨🇭' },
+  { code: 'DE', dial: '+49', name: 'Allemagne', flag: '🇩🇪' },
+  { code: 'GB', dial: '+44', name: 'Royaume-Uni', flag: '🇬🇧' },
+  { code: 'ES', dial: '+34', name: 'Espagne', flag: '🇪🇸' },
+  { code: 'IT', dial: '+39', name: 'Italie', flag: '🇮🇹' },
+  { code: 'PT', dial: '+351', name: 'Portugal', flag: '🇵🇹' },
+  { code: 'LU', dial: '+352', name: 'Luxembourg', flag: '🇱🇺' },
+
+  // Amériques & Caraïbes
   { code: 'CA', dial: '+1', name: 'Canada', flag: '🇨🇦' },
+  { code: 'US', dial: '+1', name: 'États-Unis', flag: '🇺🇸' },
+  { code: 'HT', dial: '+509', name: 'Haïti', flag: '🇭🇹' },
+  { code: 'GP', dial: '+590', name: 'Guadeloupe', flag: '🇬🇵' },
+  { code: 'MQ', dial: '+596', name: 'Martinique', flag: '🇲🇶' },
+  { code: 'GF', dial: '+594', name: 'Guyane', flag: '🇬🇫' },
+  { code: 'BR', dial: '+55', name: 'Brésil', flag: '🇧🇷' },
+
+  // Saisie universelle
+  { code: 'INT', dial: '+', name: 'Autre / International (+...)', flag: '🌐' },
 ];
+
+function guessUserCountryDial(): string {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (tz.includes('Dakar')) return '+221';
+    if (tz.includes('Ouagadougou')) return '+226';
+    if (tz.includes('Bamako')) return '+223';
+    if (tz.includes('Conakry')) return '+224';
+    if (tz.includes('Cotonou') || tz.includes('Porto-Novo')) return '+229';
+    if (tz.includes('Lome')) return '+228';
+    if (tz.includes('Niamey')) return '+227';
+    if (tz.includes('Douala') || tz.includes('Yaounde')) return '+237';
+    if (tz.includes('Libreville')) return '+241';
+    if (tz.includes('Brazzaville')) return '+242';
+    if (tz.includes('Kinshasa') || tz.includes('Lubumbashi')) return '+243';
+    if (tz.includes('Ndjamena')) return '+235';
+    if (tz.includes('Bangui')) return '+236';
+    if (tz.includes('Antananarivo')) return '+261';
+    if (tz.includes('Kigali')) return '+250';
+    if (tz.includes('Bujumbura')) return '+257';
+    if (tz.includes('Nouakchott')) return '+222';
+    if (tz.includes('Casablanca')) return '+212';
+    if (tz.includes('Algiers')) return '+213';
+    if (tz.includes('Tunis')) return '+216';
+    if (tz.includes('Cairo')) return '+20';
+    if (tz.includes('Paris')) return '+33';
+    if (tz.includes('Brussels')) return '+32';
+    if (tz.includes('Zurich') || tz.includes('Geneva')) return '+41';
+    if (tz.includes('London')) return '+44';
+    if (tz.includes('Berlin')) return '+49';
+    if (tz.includes('Madrid')) return '+34';
+    if (tz.includes('Rome')) return '+39';
+    if (tz.includes('Toronto') || tz.includes('Montreal') || tz.includes('Vancouver')) return '+1';
+    if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Los_Angeles')) return '+1';
+    if (tz.includes('Port-au-Prince')) return '+509';
+  } catch {}
+  return '+225';
+}
 
 interface AuthScreenProps {
   onLoginSuccess: (user: any, activeInvestments: any[], transactions: any[], isStale?: boolean, isNewUser?: boolean) => void;
@@ -50,15 +145,21 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
         setIsSignUp(true);
       }
 
-      // Pre-fill last known phone if available
+      // 1. Prefer previously saved country dial if available, else auto-detect from browser timezone
+      const savedDial = localStorage.getItem('gy_selected_country_dial');
+      if (savedDial) {
+        setCountryDial(savedDial);
+      } else {
+        const detected = guessUserCountryDial();
+        setCountryDial(detected);
+      }
+
+      // 2. Pre-fill last known phone if available
       const savedPhone = localStorage.getItem('gy_current_phone') || localStorage.getItem('gy_last_phone');
       if (savedPhone) {
         let p = savedPhone.trim();
-        if (p.startsWith('+225')) {
-          setCountryDial('+225');
-          setPhone(p.replace('+225', ''));
-        } else if (p.startsWith('+')) {
-          const matchedCountry = COUNTRIES.find(c => p.startsWith(c.dial));
+        if (p.startsWith('+')) {
+          const matchedCountry = COUNTRIES.find(c => c.dial !== '+' && p.startsWith(c.dial));
           if (matchedCountry) {
             setCountryDial(matchedCountry.dial);
             setPhone(p.replace(matchedCountry.dial, ''));
@@ -71,6 +172,28 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
       }
     }
   }, []);
+
+  const handleCountryChange = (dial: string) => {
+    setCountryDial(dial);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('gy_selected_country_dial', dial);
+    }
+  };
+
+  const handlePhoneInputChange = (rawVal: string) => {
+    const trimmed = rawVal.trim();
+    // Auto-detect country code if user types or pastes international format with +
+    if (trimmed.startsWith('+')) {
+      const afterPlus = trimmed.substring(1).replace(/\s+/g, '');
+      const matched = COUNTRIES.find(c => c.dial !== '+' && afterPlus.startsWith(c.dial.substring(1)));
+      if (matched) {
+        handleCountryChange(matched.dial);
+        setPhone(afterPlus.substring(matched.dial.length - 1));
+        return;
+      }
+    }
+    setPhone(rawVal);
+  };
 
   const handleToggle = () => {
     setIsSignUp(!isSignUp);
@@ -88,13 +211,21 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
 
     setLoading(true);
 
-    // Format phone number with country dial prefix
-    let finalPhone = phone.trim();
-    if (!finalPhone.startsWith('+')) {
-      const cleaned = finalPhone.replace(/\s+/g, '');
-      finalPhone = `${countryDial}${cleaned}`;
+    // Format phone number with country dial prefix cleanly
+    let cleanInput = phone.trim().replace(/\s+/g, '');
+    let finalPhone = cleanInput;
+
+    if (cleanInput.startsWith('+')) {
+      finalPhone = cleanInput;
+    } else if (countryDial === '+') {
+      finalPhone = `+${cleanInput.replace(/^\+*/, '')}`;
     } else {
-      finalPhone = finalPhone.replace(/\s+/g, '');
+      const dialDigits = countryDial.replace(/\D+/g, '');
+      if (cleanInput.startsWith(dialDigits)) {
+        finalPhone = `+${cleanInput}`;
+      } else {
+        finalPhone = `${countryDial}${cleanInput}`;
+      }
     }
 
     const rawDigits = finalPhone.replace(/\D+/g, '');
@@ -371,19 +502,20 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
             <label className="text-xs font-semibold text-slate-300 block">Numéro de Téléphone</label>
             <div className="flex gap-2">
               {/* Country select */}
-              <div className="relative shrink-0 w-32">
+              <div className="relative shrink-0 w-36">
                 <select
                   value={countryDial}
-                  onChange={(e) => setCountryDial(e.target.value)}
-                  className="w-full h-full pl-3 pr-7 py-3 bg-slate-950/50 border border-slate-800 focus:border-gold-500/50 rounded-xl text-xs text-white outline-none transition-all cursor-pointer appearance-none"
+                  onChange={(e) => handleCountryChange(e.target.value)}
+                  className="w-full h-full pl-2.5 pr-6 py-3 bg-slate-950/70 border border-slate-800 focus:border-gold-500/50 rounded-xl text-xs text-white outline-none transition-all cursor-pointer appearance-none truncate"
+                  title="Choisir votre pays / indicatif"
                 >
                   {COUNTRIES.map((c) => (
                     <option key={c.code} value={c.dial} className="bg-slate-900 text-white text-xs">
-                      {c.flag} {c.dial} ({c.code})
+                      {c.flag} {c.dial} ({c.name})
                     </option>
                   ))}
                 </select>
-                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">
                   ▼
                 </div>
               </div>
@@ -393,14 +525,17 @@ export function AuthScreen({ onLoginSuccess, onOpenVideoAd }: AuthScreenProps) {
                 <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="tel"
-                  placeholder="Ex: 0102030405"
+                  placeholder="Ex: 0102030405 ou +..."
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => handlePhoneInputChange(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-slate-950/50 border border-slate-800 focus:border-gold-500/50 rounded-xl text-sm text-white placeholder:text-slate-500 outline-none transition-all"
                   required
                 />
               </div>
             </div>
+            <span className="text-[10px] text-slate-400 flex items-center gap-1 pt-0.5">
+              <span>🌍</span> <span>Accès mondial : tous les pays sont pris en charge.</span>
+            </span>
           </div>
 
           {/* Password */}

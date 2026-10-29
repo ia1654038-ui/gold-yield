@@ -200,7 +200,16 @@ export async function checkSupabaseHealth(force: boolean = false): Promise<boole
   return isSupabaseHealthy;
 }
 
-// Helpers for flexible phone normalization and candidate matching
+// Universal international dial codes (sorted longest to shortest for accurate prefix matching)
+const KNOWN_DIAL_CODES = [
+  '225', '221', '226', '223', '229', '228', '227', '224', '222', '233', '234',
+  '237', '241', '242', '243', '235', '236', '240', '261', '250', '257', '269',
+  '253', '254', '256', '255', '212', '213', '216', '351', '352', '509', '590',
+  '594', '244', '245', '238', '232', '231', '220', '230', '251', '258', '33',
+  '32', '41', '49', '44', '34', '39', '27', '20', '55', '1'
+];
+
+// Helpers for flexible phone normalization and candidate matching across all countries
 export function normalizePhoneDigits(phone: string): string {
   return (phone || '').replace(/\D+/g, '');
 }
@@ -219,39 +228,54 @@ export function getPhoneLookupCandidates(inputPhone: string): string[] {
     candidates.add(`+${trimmed}`);
   }
 
-  // Handle Côte d'Ivoire and West Africa dial code variants (+225)
-  if (digits.startsWith('225')) {
-    const national = digits.substring(3);
-    candidates.add(national);
-    candidates.add(`0${national}`);
-    candidates.add(`+225${national}`);
-    candidates.add(`+2250${national}`);
-    if (national.startsWith('0')) {
-      const stripped = national.replace(/^0+/, '');
-      candidates.add(stripped);
-      candidates.add(`+225${stripped}`);
+  // Detect international country dial code if present
+  let matchedDial: string | null = null;
+  if (trimmed.startsWith('+')) {
+    const afterPlus = trimmed.substring(1);
+    matchedDial = KNOWN_DIAL_CODES.find(d => afterPlus.startsWith(d)) || null;
+  } else if (digits) {
+    matchedDial = KNOWN_DIAL_CODES.find(d => digits.startsWith(d)) || null;
+  }
+
+  if (matchedDial) {
+    const national = digits.substring(matchedDial.length);
+    candidates.add(`+${matchedDial}${national}`);
+    candidates.add(`${matchedDial}${national}`);
+    if (national) {
+      candidates.add(national);
+      if (national.startsWith('0')) {
+        const stripped = national.replace(/^0+/, '');
+        candidates.add(`+${matchedDial}${stripped}`);
+        candidates.add(`${matchedDial}${stripped}`);
+        if (stripped) candidates.add(stripped);
+      } else {
+        candidates.add(`+${matchedDial}0${national}`);
+        candidates.add(`${matchedDial}0${national}`);
+        candidates.add(`0${national}`);
+      }
     }
   } else if (digits) {
+    // Fallback: If no international dial code detected, treat as plain digits
+    // and also add standard regional default (+225)
     candidates.add(`+225${digits}`);
-    candidates.add(`+2250${digits}`);
     candidates.add(`225${digits}`);
-    candidates.add(`2250${digits}`);
     if (digits.startsWith('0')) {
       const stripped = digits.replace(/^0+/, '');
-      candidates.add(stripped);
       candidates.add(`+225${stripped}`);
+      candidates.add(`225${stripped}`);
+      candidates.add(stripped);
     } else {
+      candidates.add(`+2250${digits}`);
+      candidates.add(`2250${digits}`);
       candidates.add(`0${digits}`);
     }
   }
 
-  // Last 8-10 digits suffix matching
+  // Last 8 digits suffix matching for core national line
   if (digits.length >= 8) {
     const last8 = digits.slice(-8);
     candidates.add(last8);
     candidates.add(`0${last8}`);
-    candidates.add(`+225${last8}`);
-    candidates.add(`+2250${last8}`);
   }
 
   return Array.from(candidates);
@@ -267,10 +291,13 @@ export function isSamePhone(p1: string, p2: string): boolean {
   const d2 = normalizePhoneDigits(s2);
   if (d1 === d2) return true;
 
-  // Match if last 8 digits are identical (core national mobile number)
-  if (d1.length >= 8 && d2.length >= 8) {
-    if (d1.slice(-8) === d2.slice(-8)) return true;
+  // Check candidate overlap
+  const cand1 = new Set(getPhoneLookupCandidates(p1));
+  const cand2 = getPhoneLookupCandidates(p2);
+  for (const c of cand2) {
+    if (cand1.has(c)) return true;
   }
+
   return false;
 }
 

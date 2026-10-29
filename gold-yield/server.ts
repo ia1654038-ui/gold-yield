@@ -30,7 +30,32 @@ import {
 dotenv.config();
 
 const app = express();
+
+// Trust reverse proxies (Render, Cloudflare, AWS) for international traffic & SSL
+app.set('trust proxy', 1);
+
+// Universal CORS & Security Headers for all international browsers and mobile webviews
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(express.json());
+
+// Global Healthcheck Endpoints (used by uptime monitors & keepalive across all countries)
+app.get(['/healthz', '/api/healthz', '/ping'], (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'Gold Yield Global API',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Lazy-initialized Gemini AI client
 let geminiClient: GoogleGenAI | null = null;
@@ -781,8 +806,15 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     console.log('[Server] Launching in Production mode serving built assets');
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    const fs = await import('fs');
+    let distPath = path.join(process.cwd(), 'dist');
+    if (!fs.existsSync(distPath)) {
+      const subDist = path.join(process.cwd(), 'gold-yield', 'dist');
+      if (fs.existsSync(subDist)) {
+        distPath = subDist;
+      }
+    }
+    app.use(express.static(distPath, { maxAge: '1h', etag: true }));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
@@ -790,6 +822,17 @@ async function startServer() {
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`[Server] Server is running on http://localhost:${PORT}`);
+
+    // Self-Keepalive to prevent Render free-tier cold starts across all international time zones
+    if (process.env.NODE_ENV === 'production') {
+      const liveUrl = process.env.RENDER_EXTERNAL_URL || 'https://gold-yield01.onrender.com';
+      console.log(`[Server] Activating 24/7 global keepalive for: ${liveUrl}`);
+      setInterval(() => {
+        fetch(`${liveUrl}/api/healthz`)
+          .then(() => console.log(`[Server Keepalive] Ping sent successfully to ${liveUrl}`))
+          .catch((err) => console.warn(`[Server Keepalive] Ping notice:`, err?.message));
+      }, 10 * 60 * 1000); // Every 10 minutes
+    }
   });
 }
 
